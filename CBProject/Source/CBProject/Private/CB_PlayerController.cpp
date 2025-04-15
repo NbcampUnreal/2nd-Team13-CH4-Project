@@ -4,7 +4,7 @@ void ACB_PlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    SetInputEnabled(false); // 시작 시 비활성화
+    SetInputEnabled(false); //시작 시 비활성화
 }
 
 void ACB_PlayerController::SetInputEnabled(bool bEnable)

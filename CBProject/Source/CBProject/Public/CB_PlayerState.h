@@ -6,11 +6,15 @@
 #include "GameFramework/PlayerState.h"
 #include "CB_PlayerState.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class CBPROJECT_API ACB_PlayerState : public APlayerState
 {
 	GENERATED_BODY()
+
+public: 
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	int32 Lives = 3;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

@@ -19,7 +19,9 @@ public:
 
 	void StartPlay();
 	void StartGame();
+	void RespawnPlayer(AController* Controller);
 
+	void HandlePlayerDeath(AController* DeadController);
 	void HandleRespawn(AController* Controller);
 
 	FTimerHandle CountdownTimerHandle;

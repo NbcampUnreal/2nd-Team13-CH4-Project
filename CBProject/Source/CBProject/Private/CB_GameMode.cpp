@@ -1,8 +1,9 @@
 #include "CB_GameMode.h"
-#include "Kismet/GameplayStatics.h"
 #include "CB_GameState.h"
 #include "CB_PlayerController.h"
+#include "CB_PlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 void ACB_GameMode::BeginPlay()
 {
@@ -72,6 +73,21 @@ void ACB_GameMode::HandleRespawn(AController* Controller)
 		false);
 }
 
+void ACB_GameMode::HandlePlayerDeath(AController* DeadController)
+{
+	ACB_PlayerState* CB_PlayerState = DeadController->GetPlayerState<ACB_PlayerState>();
+	if (CB_PlayerState && --CB_PlayerState->Lives > 0)
+	{
+		//리스폰 처리
+		RespawnPlayer(DeadController);
+	}
+	else
+	{
+		//관전모드
+		DeadController->ChangeState(NAME_Spectating);
+	}
+}
+
 void ACB_GameMode::OnRep_CountdownChanged()
 {
 	// 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
@@ -82,4 +98,9 @@ void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACB_GameMode, bIsCountdownRunning);
+}
+
+void ACB_GameMode::RespawnPlayer(AController* Controller)
+{
+
 }
