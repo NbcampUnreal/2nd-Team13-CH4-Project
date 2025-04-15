@@ -4,7 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "CB_PlatformInterface.h"
 #include "Components/SceneComponent.h" 
-#include "Components/StaticMeshComponent.h" 
+#include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "CB_MovingPlatform.generated.h"
 
 UCLASS()
@@ -16,10 +17,18 @@ public:
 	
 	ACB_MovingPlatform();
 
+	// 현재 발판이 활성화(이동 중) 상태인지 여부
+	UPROPERTY(ReplicatedUsing = OnRep_IsActive)
+	bool bIsActive = false;
+
+	UFUNCTION()
+	void OnRep_IsActive();
+	
 protected:
 	
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
@@ -50,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Platform|Activation")
 	bool bStartActive = true;
 
+	
+
+	//인터페이스
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Platform")
 	void ActivatePlatform();
 	virtual void ActivatePlatform_Implementation() override; 
@@ -62,6 +74,7 @@ public:
 	bool IsPlatformActive();
 	virtual bool IsPlatformActive_Implementation() override;
 
+	
 private:
 	// 월드 좌표계의 시작 위치
 	FVector GlobalStartLocation;
@@ -74,10 +87,9 @@ private:
 
 	// 현재 대기 시간 카운터
 	float CurrentWaitTime = 0.0f;
-
-	// 현재 발판이 활성화(이동 중) 상태인지 여부
-	bool bIsActive = false;
-
+	
 	// 이동 방향 벡터 (정규화됨)
 	FVector MoveDirection;
+
+	
 };
