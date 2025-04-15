@@ -6,12 +6,12 @@
 #include "GameFramework/PlayerController.h"
 #include "CB_PlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CBPROJECT_API ACB_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void BeginPlay() override;
+	void SetInputEnabled(bool bEnable);
 };

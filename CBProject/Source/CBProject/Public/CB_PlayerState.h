@@ -13,5 +13,4 @@ UCLASS()
 class CBPROJECT_API ACB_PlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
 };
