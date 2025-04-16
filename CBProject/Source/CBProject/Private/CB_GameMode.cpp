@@ -17,19 +17,50 @@ void ACB_GameMode::StartPlay()
 {
 	Super::StartPlay();
 
+	CountdownTime = 3;
+
+	UpdateCountdownUI();
+
 	// 카운트 다운 시작(3초)
 	GetWorldTimerManager().SetTimer(
 		CountdownTimerHandle, 
 		this, 
-		&ACB_GameMode::StartGame, 
-		3.0f, 
-		false);
+		&ACB_GameMode::TickCountdown, 
+		1.0f, 
+		true);
 
 	//GameState에 카운트 다운 시작 알림
 	if (ACB_GameState* CB_GameState = GetGameState<ACB_GameState>())
 	{
 		CB_GameState->bIsCountdownRunning = true;
 	}
+}
+
+void ACB_GameMode::TickCountdown()
+{
+	CountdownTime--;
+
+	UpdateCountdownUI();
+
+	if (CountdownTime < 0)
+	{
+		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
+		StartGame();
+	}
+}
+
+void ACB_GameMode::UpdateCountdownUI()
+{
+	//for (APlayerController* PC : TActorRange<APlayerController>(GetWorld()))
+	//{
+	//	if (ACB_PlayerController* CB_PC = Cast<ACB_PlayerController>(PC))
+	//	{
+	//		if (UCB_CountdownWidget* CountdownWidget = CB_PC->GetCountdownWidget())
+	//		{
+	//			CountdownWidget->UpdateCountdownImage(CountdownTime);
+	//		}
+	//	}
+	//}
 }
 
 void ACB_GameMode::StartGame()
@@ -102,5 +133,5 @@ void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ACB_GameMode::RespawnPlayer(AController* Controller)
 {
-
+	//Life 차감 및 스폰 포인트에서 리스폰
 }
