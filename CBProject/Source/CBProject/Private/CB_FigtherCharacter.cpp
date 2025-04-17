@@ -7,6 +7,7 @@
 ACB_FigtherCharacter::ACB_FigtherCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+  GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	bReplicates = true;
 	MaxHealth = 100.f;
@@ -93,6 +94,6 @@ void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation()
 
 void ACB_FigtherCharacter::OnRep_Health()
 {
-	// Client ¿¡¼­ Health °ª ¹Ù²ğ ¶§ UI,ÀÌÆÑÆ®, ÇÇ°İ ¹İÀÀ Ãâ·Â
+	// Client ì—ì„œ Health ê°’ ë°”ë€” ë•Œ UI,ì´íŒ©íŠ¸, í”¼ê²© ë°˜ì‘ ì¶œë ¥
 }
 

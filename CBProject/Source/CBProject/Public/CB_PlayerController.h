@@ -6,39 +6,57 @@
 #include "GameFramework/PlayerController.h"
 #include "CB_PlayerController.generated.h"
 
-class UInputMappingContext; // IMC 관련 전방 선언
-class UInputAction; // IA 관련 전방 선언
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 
 UCLASS()
 class CBPROJECT_API ACB_PlayerController : public APlayerController
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
-	
-	ACB_PlayerController();
-	virtual void BeginPlay() override;
-	void SetInputEnabled(bool bEnable);
+    ACB_PlayerController();
+    virtual void BeginPlay() override;
+    void SetInputEnabled(bool bEnable);
 
-	// 에디터에서 세팅할 IMC
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputMappingContext* InputMappingContext;
-	
-	// IA_Move를 지정할 변수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* MoveAction;
-	
-	// IA_Jump를 지정할 변수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* JumpAction;
-	
-	// IA_Dash를 지정할 변수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* DashAction;
-	
-	// IA_Crouch를 지정할 변수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputAction* CrouchAction;
+protected:
+    virtual void SetupInputComponent() override; // APlayerController는 이걸 오버라이드해야 함
 
+    UFUNCTION()
+    void Move(const FInputActionValue& Value);
 
+    UFUNCTION()
+    void StartJump(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void StopJump(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void StartCrouch(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void StopCrouch(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void StartDash(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void StopDash(const FInputActionValue& Value);
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputMappingContext* InputMappingContext;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* MoveAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* JumpAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* DashAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* CrouchAction;
 };
