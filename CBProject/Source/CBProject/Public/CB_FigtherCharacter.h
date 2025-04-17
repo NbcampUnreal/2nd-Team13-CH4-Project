@@ -10,14 +10,32 @@ class CBPROJECT_API ACB_FigtherCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ACB_FigtherCharacter();
 
-protected:
-	// Called when the game starts or when spawned
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(ReplicatedUsing = OnRep_Health)
+	float CurrentHealth;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Stats")
+	float MaxHealth;
+
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser) override;
+
+	void ReceiveHeal(float HealAmount);
+
+	UFUNCTION(Server, Reliable)
+	void Attack();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastPlayAttackAnim();
+
+	UFUNCTION()
+	void OnRep_Health();
 };

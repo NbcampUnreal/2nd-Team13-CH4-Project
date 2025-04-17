@@ -13,8 +13,13 @@ class CBPROJECT_API ACB_PlayerState : public APlayerState
 	GENERATED_BODY()
 
 public: 
+	ACB_PlayerState();
+
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 Lives = 3;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Team")
+	int32 TeamIndex;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
