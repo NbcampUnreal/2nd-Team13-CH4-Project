@@ -1,5 +1,6 @@
 #include "CB_FigtherCharacter.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "GameFramework/CharacterMovementComponent.h"
 
 ACB_FigtherCharacter::ACB_FigtherCharacter()
@@ -17,6 +18,17 @@ ACB_FigtherCharacter::ACB_FigtherCharacter()
 ACB_FigtherCharacter::ACB_FigtherCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+=======
+#include "Net/UnrealNetwork.h"
+#include "CB_PlayerState.h"
+#include "Engine/DamageEvents.h"
+#include "CB_GameMode.h"
+
+ACB_FigtherCharacter::ACB_FigtherCharacter()
+{
+	PrimaryActorTick.bCanEverTick = true;
+  GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+>>>>>>> 496ca6a75a389c0159fd46e936528eb2a2418075
 
 	bReplicates = true;
 	MaxHealth = 100.f;
@@ -28,7 +40,10 @@ void ACB_FigtherCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACB_FigtherCharacter, CurrentHealth);
+<<<<<<< HEAD
 >>>>>>> cae80b4 (HP ì„œë²„ ì—°ë™)
+=======
+>>>>>>> 496ca6a75a389c0159fd46e936528eb2a2418075
 }
 
 void ACB_FigtherCharacter::BeginPlay()
@@ -104,6 +119,10 @@ void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation()
 
 void ACB_FigtherCharacter::OnRep_Health()
 {
+<<<<<<< HEAD
 	// Client ¿¡¼­ Health °ª ¹Ù²ð ¶§ UI,ÀÌÆÑÆ®, ÇÇ°Ý ¹ÝÀÀ Ãâ·Â
+=======
+	// Client ì—ì„œ Health ê°’ ë°”ë€” ë•Œ UI,ì´íŒ©íŠ¸, í”¼ê²© ë°˜ì‘ ì¶œë ¥
+>>>>>>> 496ca6a75a389c0159fd46e936528eb2a2418075
 }
 
