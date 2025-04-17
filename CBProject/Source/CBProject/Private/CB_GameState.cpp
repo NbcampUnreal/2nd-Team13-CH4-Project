@@ -11,4 +11,5 @@ void ACB_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ACB_GameState, bIsCountdownRunning);
+    DOREPLIFETIME(ACB_GameState, SharedCameraActor);
 }

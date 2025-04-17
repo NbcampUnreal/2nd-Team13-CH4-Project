@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	void OnRep_CountdownChanged();
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> CameraActorClass;
+
 protected:
 	TArray<AActor*> SpawnPoints;
 };

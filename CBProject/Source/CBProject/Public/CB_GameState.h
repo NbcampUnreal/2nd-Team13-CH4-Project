@@ -19,4 +19,6 @@ public:
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+    AActor* SharedCameraActor;
 };

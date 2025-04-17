@@ -11,6 +11,21 @@ void ACB_GameMode::BeginPlay()
 
 	//맵에 배치된 SpawnPoint 태그를 가진 액터 모으기
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SpawnPoint"), SpawnPoints);
+
+	if (HasAuthority())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AActor* Camera = GetWorld()->SpawnActor<AActor>(CameraActorClass, FVector(0, 0, 300), FRotator(-45, 0, 0), SpawnParams);
+	
+		ACB_GameState* GS = GetGameState<ACB_GameState>();
+		if (GS)
+		{
+			GS->SharedCameraActor = Camera;
+		}
+	}
 }
 
 void ACB_GameMode::StartPlay()
