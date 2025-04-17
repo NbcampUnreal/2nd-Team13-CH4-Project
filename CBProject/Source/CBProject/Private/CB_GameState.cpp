@@ -13,3 +13,11 @@ void ACB_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
     DOREPLIFETIME(ACB_GameState, bIsCountdownRunning);
     DOREPLIFETIME(ACB_GameState, SharedCameraActor);
 }
+
+void ACB_GameState::CameraSetting()
+{
+    if (GetWorld())
+    {
+        SharedCameraActor = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+    }
+}

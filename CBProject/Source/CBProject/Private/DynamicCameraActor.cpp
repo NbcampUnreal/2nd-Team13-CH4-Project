@@ -4,13 +4,13 @@
 
 ADynamicCameraActor::ADynamicCameraActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	//스프링 암 설정
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bDoCollisionTest = false;
-	SpringArm->TargetArmLength = 1200.0f;
+	SpringArm->TargetArmLength = 100.0f;
 
 	//카메라 설정
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -49,7 +49,7 @@ void ADynamicCameraActor::Tick(float DeltaTime)
 	}
 
 	//카메라 위치 이동
-	FVector TargetLoc = FVector(Center.X, -800.0f, Center.Z + 300.0f); //고정된 거리와 높이
+	FVector TargetLoc = FVector(Center.X, 0.0f, Center.Z + 0.0f); //고정된 거리와 높이
 	SetActorLocation(FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 5.0f));
 
 	//줌
