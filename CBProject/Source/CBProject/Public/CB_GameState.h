@@ -14,11 +14,12 @@ public:
     UPROPERTY(ReplicatedUsing = OnRep_CountdownChanged)
     bool bIsCountdownRunning = false;
 
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+    AActor* SharedCameraActor;
+
     UFUNCTION()
     void OnRep_CountdownChanged();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
-    AActor* SharedCameraActor;
+    void CameraSetting();
 };

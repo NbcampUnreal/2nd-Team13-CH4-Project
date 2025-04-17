@@ -3,6 +3,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "CB_FigtherCharacter.h"
+#include "CB_GameState.h"
 
 ACB_PlayerController::ACB_PlayerController()
     : InputMappingContext(nullptr),
@@ -28,6 +29,18 @@ void ACB_PlayerController::BeginPlay()
                 Subsystem->AddMappingContext(InputMappingContext, 0);
             }
         }
+    }
+
+    if (IsLocalController())
+    {
+        GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+        {
+                ACB_GameState* GS = GetWorld()->GetGameState<ACB_GameState>();
+                if (GS && GS->SharedCameraActor)
+                {
+                    SetViewTargetWithBlend(GS->SharedCameraActor, 0.5f);
+                }
+        });
     }
 }
 
