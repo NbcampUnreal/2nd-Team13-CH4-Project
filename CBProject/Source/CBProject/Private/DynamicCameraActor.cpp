@@ -1,5 +1,5 @@
-#include "Kismet/GameplayStatics.h"
 #include "DynamicCameraActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "CB_FigtherCharacter.h"
 
 ADynamicCameraActor::ADynamicCameraActor()
