@@ -4,6 +4,7 @@
 #include "CB_PlayerState.h"
 #include "Engine/DamageEvents.h"
 #include "CB_GameMode.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACB_FigtherCharacter::ACB_FigtherCharacter()
 {
@@ -96,6 +97,6 @@ void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation()
 
 void ACB_FigtherCharacter::OnRep_Health()
 {
-	// Client ¿¡¼­ Health °ª ¹Ù²ğ ¶§ UI,ÀÌÆÑÆ®, ÇÇ°İ ¹İÀÀ Ãâ·Â
+	// Client ?ì„œ Health ê°?ë°”ë€???UI,?´íŒ©?? ?¼ê²© ë°˜ì‘ ì¶œë ¥
 }
 
