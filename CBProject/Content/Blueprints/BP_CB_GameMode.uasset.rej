@@ -1,9 +1,0 @@
-diff a/CBProject/Content/Blueprints/BP_CB_GameMode.uasset b/CBProject/Content/Blueprints/BP_CB_GameMode.uasset	(rejected hunks)
-@@ -1,5 +1,5 @@
-  version https://git-lfs.github.com/spec/v1
-- oid sha256:199f3da9d07472c1cc828076bcf8886846825e682dd9757e0b20a9265bb473e5
-- size 21368
- -oid sha256:591c274b07e50430ed3478e862aeac9ff36e2c9520e876896cabc62309bcacc6
- -size 21605
-++oid sha256:3d9d684fc4ebf576f05a677522154ce1573c2b5d9fb6f1e961ce0d9e99bf4574
-++size 274
