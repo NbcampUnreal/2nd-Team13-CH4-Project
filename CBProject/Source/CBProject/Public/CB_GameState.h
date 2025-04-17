@@ -11,6 +11,8 @@ class CBPROJECT_API ACB_GameState : public AGameStateBase
 	
 
 public:
+    virtual void BeginPlay() override;
+
     UPROPERTY(ReplicatedUsing = OnRep_CountdownChanged)
     bool bIsCountdownRunning = false;
 

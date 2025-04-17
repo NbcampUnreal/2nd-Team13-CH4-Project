@@ -1,6 +1,16 @@
 ﻿#include "CB_GameState.h"
 #include "Net/UnrealNetwork.h"
 
+void ACB_GameState::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (HasAuthority())
+    {
+        CameraSetting();
+    }
+}
+
 void ACB_GameState::OnRep_CountdownChanged()
 {
     // 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
