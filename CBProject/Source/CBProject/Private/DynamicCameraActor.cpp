@@ -1,4 +1,4 @@
-#include "DynamicCameraActor.h"
+ï»¿#include "DynamicCameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "CB_FigtherCharacter.h"
 
@@ -6,13 +6,13 @@ ADynamicCameraActor::ADynamicCameraActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//½ºÇÁ¸µ ¾Ï ¼³Á¤
+	//ìŠ¤í”„ë§ ì•” ì„¤ì •
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->TargetArmLength = 1200.0f;
 
-	//Ä«¸Ş¶ó ¼³Á¤
+	//ì¹´ë©”ë¼ ì„¤ì •
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 	Camera->SetProjectionMode(ECameraProjectionMode::Perspective);
@@ -21,24 +21,24 @@ ADynamicCameraActor::ADynamicCameraActor()
 void ADynamicCameraActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//ACB_FigtherCharacterÀÇ ¸ğµç Ä³¸¯ÅÍ °¡Á®¿À±â
+	//ACB_FigtherCharacterì˜ ëª¨ë“  ìºë¦­í„° ê°€ì ¸ì˜¤ê¸°
 	TArray<AActor*> Fighters;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACB_FigtherCharacter::StaticClass(), Fighters);
 
-	//Ä³¸¯ÅÍ°¡ ¾øÀ¸¸é Á¾·á
+	//ìºë¦­í„°ê°€ ì—†ìœ¼ë©´ ì¢…ë£Œ
 	if (Fighters.Num() == 0) return;
 
 	FVector Center = FVector::ZeroVector;
 	float MaxDist = 0.0f;
 
-	//¸ğµç Ä³¸¯ÅÍÀÇ Áß½É À§Ä¡ °è»ê
+	//ëª¨ë“  ìºë¦­í„°ì˜ ì¤‘ì‹¬ ìœ„ì¹˜ ê³„ì‚°
 	for (AActor* Actor : Fighters)
 	{
 		Center += Actor->GetActorLocation();
 	}
 	Center /= Fighters.Num();
 
-	//°¡Àå ¸Ö¸® ¶³¾îÁø µÎ ÇÃ·¹ÀÌ¾î °£ °Å¸® °è»ê
+	//ê°€ì¥ ë©€ë¦¬ ë–¨ì–´ì§„ ë‘ í”Œë ˆì´ì–´ ê°„ ê±°ë¦¬ ê³„ì‚°
 	for (int32 i = 0; i < Fighters.Num(); ++i)
 	{
 		for (int32 j = i + 1; j < Fighters.Num(); ++j)
@@ -48,12 +48,12 @@ void ADynamicCameraActor::Tick(float DeltaTime)
 		}
 	}
 
-	//Ä«¸Ş¶ó À§Ä¡ ÀÌµ¿
-	FVector TargetLoc = FVector(Center.X, -800.0f, Center.Z + 300.0f); //°íÁ¤µÈ °Å¸®¿Í ³ôÀÌ
+	//ì¹´ë©”ë¼ ìœ„ì¹˜ ì´ë™
+	FVector TargetLoc = FVector(Center.X, -800.0f, Center.Z + 300.0f); //ê³ ì •ëœ ê±°ë¦¬ì™€ ë†’ì´
 	SetActorLocation(FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 5.0f));
 
-	//ÁÜ
+	//ì¤Œ
 	float DesiredLength = FMath::Clamp(MaxDist * 1.2f, 1000.0f, 2500.0f);
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, DesiredLength, DeltaTime, 5.0f);
 }
-//°ÔÀÓ¸ğµå¿¡ Ä«¸Ş¶ó ½ºÆù ÈÄ °ÔÀÓ ½ºÅ×ÀÌÆ®¿¡¼­ Ä«¸Ş¶ó ÇÒ´ç?
+//ê²Œì„ëª¨ë“œì— ì¹´ë©”ë¼ ìŠ¤í° í›„ ê²Œì„ ìŠ¤í…Œì´íŠ¸ì—ì„œ ì¹´ë©”ë¼ í• ë‹¹?

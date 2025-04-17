@@ -1,4 +1,4 @@
-#include "CB_FigtherCharacter.h"
+﻿#include "CB_FigtherCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "CB_PlayerState.h"
@@ -97,6 +97,6 @@ void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation()
 
 void ACB_FigtherCharacter::OnRep_Health()
 {
-	// Client ?�서 Health �?바�???UI,?�팩?? ?�격 반응 출력
+	// Client 내에  UI 반영
 }
 

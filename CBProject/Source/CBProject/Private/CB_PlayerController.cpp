@@ -1,4 +1,4 @@
-#include "CB_PlayerController.h"
+ï»¿#include "CB_PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -17,7 +17,7 @@ void ACB_PlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    SetInputEnabled(true); // Å×½ºÆ® Áß¿¡´Â true
+    SetInputEnabled(true); // í…ŒìŠ¤íŠ¸ ì¤‘ì—ëŠ” true
 
     if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
     {

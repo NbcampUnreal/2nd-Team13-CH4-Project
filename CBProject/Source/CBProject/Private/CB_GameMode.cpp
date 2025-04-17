@@ -1,4 +1,4 @@
-#include "CB_GameMode.h"
+ï»¿#include "CB_GameMode.h"
 #include "CB_GameState.h"
 #include "CB_PlayerController.h"
 #include "CB_PlayerState.h"
@@ -9,7 +9,7 @@ void ACB_GameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//¸Ê¿¡ ¹èÄ¡µÈ SpawnPoint ÅÂ±×¸¦ °¡Áø ¾×ÅÍ ¸ğÀ¸±â
+	//ë§µì— ë°°ì¹˜ëœ SpawnPoint íƒœê·¸ë¥¼ ê°€ì§„ ì•¡í„° ëª¨ìœ¼ê¸°
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SpawnPoint"), SpawnPoints);
 
 	if (HasAuthority())
@@ -36,7 +36,7 @@ void ACB_GameMode::StartPlay()
 
 	UpdateCountdownUI();
 
-	// Ä«¿îÆ® ´Ù¿î ½ÃÀÛ(3ÃÊ)
+	// ì¹´ìš´íŠ¸ ë‹¤ìš´ ì‹œì‘(3ì´ˆ)
 	GetWorldTimerManager().SetTimer(
 		CountdownTimerHandle, 
 		this, 
@@ -44,7 +44,7 @@ void ACB_GameMode::StartPlay()
 		1.0f, 
 		true);
 
-	//GameState¿¡ Ä«¿îÆ® ´Ù¿î ½ÃÀÛ ¾Ë¸²
+	//GameStateì— ì¹´ìš´íŠ¸ ë‹¤ìš´ ì‹œì‘ ì•Œë¦¼
 	if (ACB_GameState* CB_GameState = GetGameState<ACB_GameState>())
 	{
 		CB_GameState->bIsCountdownRunning = true;
@@ -85,7 +85,7 @@ void ACB_GameMode::StartGame()
 		CB_GameState->bIsCountdownRunning = false;
 	}
 
-	//¸ğµç ÇÃ·¹ÀÌ¾î ÀÔ·Â È°¼ºÈ­
+	//ëª¨ë“  í”Œë ˆì´ì–´ ì…ë ¥ í™œì„±í™”
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		ACB_PlayerController* PlayerController = Cast<ACB_PlayerController>(*It);
@@ -97,7 +97,7 @@ void ACB_GameMode::StartGame()
 }
 
 void ACB_GameMode::RestartPlayer(AController* NewPlayer)
-{	//Àç½ÃÀÛ ÇÏ¸é SpawnPointÀÇ ÅÂ±×¸¦ °¡Áø ·£´ı ½ºÆùÀ§Ä¡·Î ¼ÒÈ¯
+{	//ì¬ì‹œì‘ í•˜ë©´ SpawnPointì˜ íƒœê·¸ë¥¼ ê°€ì§„ ëœë¤ ìŠ¤í°ìœ„ì¹˜ë¡œ ì†Œí™˜
 	if (SpawnPoints.Num() > 0)
 	{
 		AActor* ChosenSpawn = SpawnPoints[FMath::RandRange(0, SpawnPoints.Num() - 1)];
@@ -110,7 +110,7 @@ void ACB_GameMode::RestartPlayer(AController* NewPlayer)
 }
 
 void ACB_GameMode::HandleRespawn(AController* Controller)
-{	//3ÃÊ ÈÄ ¸®½ºÆù
+{	//3ì´ˆ í›„ ë¦¬ìŠ¤í°
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(
 		TimerHandle, 
@@ -124,19 +124,19 @@ void ACB_GameMode::HandlePlayerDeath(AController* DeadController)
 	ACB_PlayerState* CB_PlayerState = DeadController->GetPlayerState<ACB_PlayerState>();
 	if (CB_PlayerState && --CB_PlayerState->Lives > 0)
 	{
-		//¸®½ºÆù Ã³¸®
+		//ë¦¬ìŠ¤í° ì²˜ë¦¬
 		RespawnPlayer(DeadController);
 	}
 	else
 	{
-		//°üÀü¸ğµå
+		//ê´€ì „ëª¨ë“œ
 		DeadController->ChangeState(NAME_Spectating);
 	}
 }
 
 void ACB_GameMode::OnRep_CountdownChanged()
 {
-	// Å¬¶ó¿¡¼­ UI ¹İ¿µ ¿ëµµ (HUD¿¡¼­ Å¸ÀÌ¸Ó ½ÃÀÛ)
+	// í´ë¼ì—ì„œ UI ë°˜ì˜ ìš©ë„ (HUDì—ì„œ íƒ€ì´ë¨¸ ì‹œì‘)
 }
 
 void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -148,5 +148,5 @@ void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ACB_GameMode::RespawnPlayer(AController* Controller)
 {
-	//Life Â÷°¨ ¹× ½ºÆù Æ÷ÀÎÆ®¿¡¼­ ¸®½ºÆù
+	//Life ì°¨ê° ë° ìŠ¤í° í¬ì¸íŠ¸ì—ì„œ ë¦¬ìŠ¤í°
 }

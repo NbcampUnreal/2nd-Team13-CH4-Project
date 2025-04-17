@@ -1,9 +1,9 @@
-#include "CB_GameState.h"
+ï»¿#include "CB_GameState.h"
 #include "Net/UnrealNetwork.h"
 
 void ACB_GameState::OnRep_CountdownChanged()
 {
-    // Å¬¶ó¿¡¼­ UI ¹İ¿µ ¿ëµµ (HUD¿¡¼­ Å¸ÀÌ¸Ó ½ÃÀÛ)
+    // í´ë¼ì—ì„œ UI ë°˜ì˜ ìš©ë„ (HUDì—ì„œ íƒ€ì´ë¨¸ ì‹œì‘)
 }
 
 void ACB_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

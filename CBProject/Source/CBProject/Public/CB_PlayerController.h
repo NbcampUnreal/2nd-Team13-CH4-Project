@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,7 +21,7 @@ public:
     void SetInputEnabled(bool bEnable);
 
 protected:
-    virtual void SetupInputComponent() override; // APlayerController´Â ÀÌ°É ¿À¹ö¶óÀÌµåÇØ¾ß ÇÔ
+    virtual void SetupInputComponent() override; // APlayerControllerëŠ” ì´ê±¸ ì˜¤ë²„ë¼ì´ë“œí•´ì•¼ í•¨
 
     UFUNCTION()
     void Move(const FInputActionValue& Value);
