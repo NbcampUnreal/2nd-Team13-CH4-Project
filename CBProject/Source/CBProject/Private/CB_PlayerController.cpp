@@ -33,7 +33,8 @@ void ACB_PlayerController::BeginPlay()
 
     if (IsLocalController())
     {
-        GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+        FTimerHandle TimerHandle;
+        GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
         {
                 ACB_GameState* GS = GetWorld()->GetGameState<ACB_GameState>();
                 UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay : %s"),
@@ -44,7 +45,7 @@ void ACB_PlayerController::BeginPlay()
                     UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay 1 : %s"),
                         *GetNameSafe(this));
                 }
-        });
+        }, 2.0f, false);
     }
 }
 
