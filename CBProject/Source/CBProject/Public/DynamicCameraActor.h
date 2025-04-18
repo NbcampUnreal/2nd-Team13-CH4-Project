@@ -18,9 +18,9 @@ public:
 
 	//편집 가능 오프셋
 	UPROPERTY(EditAnywhere, Category = "Camera|Offset")
-	float CameraYOffset = -800.f;
+	float CameraYOffset = 900.f;
 	UPROPERTY(EditAnywhere, Category = "Camera|Offset")
-	float CameraZOffset = 300.f;
+	float CameraZOffset = 200.f;
 
 protected:
 	UPROPERTY()

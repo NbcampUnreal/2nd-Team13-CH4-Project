@@ -36,13 +36,9 @@ void ACB_PlayerController::BeginPlay()
         GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
         {
                 ACB_GameState* GS = GetWorld()->GetGameState<ACB_GameState>();
-                UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay : %s"),
-                    *GetNameSafe(GS->SharedCameraActor));
                 if (GS && GS->SharedCameraActor)
                 {
                     SetViewTargetWithBlend(GS->SharedCameraActor, 0.5f);
-                    UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay 1 : %s"),
-                        *GetNameSafe(this));
                 }
         });
     }

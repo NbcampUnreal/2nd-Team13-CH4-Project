@@ -29,7 +29,7 @@ void ACB_GameMode::BeginPlay()
 		ADynamicCameraActor* Cam = GetWorld()->SpawnActor<ADynamicCameraActor>(
 			CameraActorClass, 
 			FVector(0, 0, 300), 
-			FRotator(0, 0, 0), 
+			FRotator(-45, 0, 0), 
 			Params
 		);
 	
