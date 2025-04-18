@@ -1,8 +1,8 @@
-﻿
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "DynamicCameraActor.h"
 #include "CB_GameMode.generated.h"
 
 UCLASS()
@@ -11,9 +11,10 @@ class CBPROJECT_API ACB_GameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	ACB_GameMode();
 	virtual void BeginPlay() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void RestartPlayer(AController* NewPlayer) override;
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	int32 CountdownTime;
@@ -34,8 +35,8 @@ public:
 	UFUNCTION()
 	void OnRep_CountdownChanged();
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> CameraActorClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	TSubclassOf<ADynamicCameraActor> CameraActorClass;
 
 protected:
 	TArray<AActor*> SpawnPoints;

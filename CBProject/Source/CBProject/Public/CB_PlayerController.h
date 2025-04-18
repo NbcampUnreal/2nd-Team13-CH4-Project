@@ -20,6 +20,9 @@ public:
     virtual void BeginPlay() override;
     void SetInputEnabled(bool bEnable);
 
+    UFUNCTION(Client, Reliable)
+    void ClientSetCamera(AActor* CameraActor);
+
 protected:
     virtual void SetupInputComponent() override; // APlayerController는 이걸 오버라이드해야 함
 

@@ -44,6 +44,14 @@ void ACB_PlayerController::BeginPlay()
     }
 }
 
+void ACB_PlayerController::ClientSetCamera_Implementation(AActor* CameraActor)
+{
+    if (CameraActor)
+    {
+        SetViewTargetWithBlend(CameraActor, 0.5f);
+    }
+}
+
 void ACB_PlayerController::SetInputEnabled(bool bEnable)
 {
     if (APawn* MyPawn = GetPawn())
