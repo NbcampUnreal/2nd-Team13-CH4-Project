@@ -6,11 +6,16 @@ ADynamicCameraActor::ADynamicCameraActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//루트 컴포넌트 설정
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
+
 	//스프링 암 설정
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bDoCollisionTest = false;
-	SpringArm->TargetArmLength = 100.0f;
+	SpringArm->TargetArmLength = 1200.0f;
+	SpringArm->SetRelativeRotation(FRotator(-10.f, 0.f, 0.f));
 
 	//카메라 설정
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -21,6 +26,7 @@ ADynamicCameraActor::ADynamicCameraActor()
 void ADynamicCameraActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	//ACB_FigtherCharacter의 모든 캐릭터 가져오기
 	TArray<AActor*> Fighters;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACB_FigtherCharacter::StaticClass(), Fighters);
@@ -43,17 +49,15 @@ void ADynamicCameraActor::Tick(float DeltaTime)
 	{
 		for (int32 j = i + 1; j < Fighters.Num(); ++j)
 		{
-			float Dist = FVector::Dist2D(Fighters[i]->GetActorLocation(), Fighters[j]->GetActorLocation());
-			MaxDist = FMath::Max(MaxDist, Dist);
+			MaxDist = FMath::Max(MaxDist, FVector::Dist2D(Fighters[i]->GetActorLocation(), Fighters[j]->GetActorLocation()));
 		}
 	}
 
 	//카메라 위치 이동
-	FVector TargetLoc = FVector(Center.X, 0.0f, Center.Z + 0.0f); //고정된 거리와 높이
-	SetActorLocation(FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 5.0f));
+	FVector TargetLoc = FVector(Center.X, Center.Y + CameraYOffset, Center.Z + CameraZOffset);
+	SetActorLocation(FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 5.f));
 
 	//줌
 	float DesiredLength = FMath::Clamp(MaxDist * 1.2f, 1000.0f, 2500.0f);
-	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, DesiredLength, DeltaTime, 5.0f);
+	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, DesiredLength, DeltaTime, 5.f);
 }
-//게임모드에 카메라 스폰 후 게임 스테이트에서 카메라 할당?

@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -18,9 +16,19 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere)
+	//편집 가능 오프셋
+	UPROPERTY(EditAnywhere, Category = "Camera|Offset")
+	float CameraYOffset = -800.f;
+	UPROPERTY(EditAnywhere, Category = "Camera|Offset")
+	float CameraZOffset = 300.f;
+
+protected:
+	UPROPERTY()
+	USceneComponent* Root;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* Camera;
 };

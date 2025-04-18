@@ -1,10 +1,7 @@
 ﻿#include "CB_GameState.h"
 #include "Net/UnrealNetwork.h"
-
-void ACB_GameState::OnRep_CountdownChanged()
-{
-    // 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
-}
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 void ACB_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -14,10 +11,22 @@ void ACB_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
     DOREPLIFETIME(ACB_GameState, SharedCameraActor);
 }
 
-void ACB_GameState::CameraSetting()
+void ACB_GameState::OnRep_SharedCameraActor()
 {
-    if (GetWorld())
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
     {
-        SharedCameraActor = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+        APlayerController* PC = It->Get();
+        if(PC && PC->IsLocalController() && SharedCameraActor)
+        {
+            PC->SetViewTargetWithBlend(SharedCameraActor, 0.5f);
+        }
     }
+}
+
+void ACB_GameState::OnRep_CountdownChanged()
+{
+    // 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
 }

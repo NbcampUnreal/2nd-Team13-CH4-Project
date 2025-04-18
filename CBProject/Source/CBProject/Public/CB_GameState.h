@@ -11,15 +11,17 @@ class CBPROJECT_API ACB_GameState : public AGameStateBase
 	
 
 public:
-    UPROPERTY(ReplicatedUsing = OnRep_CountdownChanged)
-    bool bIsCountdownRunning = false;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-    AActor* SharedCameraActor;
+    UPROPERTY(ReplicatedUsing = OnRep_SharedCameraActor, EditAnywhere, BlueprintReadOnly, Category = "Camera")
+    AActor* SharedCameraActor = nullptr;
+
+    UFUNCTION()
+    void OnRep_SharedCameraActor();
 
     UFUNCTION()
     void OnRep_CountdownChanged();
 
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    void CameraSetting();
+    UPROPERTY(ReplicatedUsing = OnRep_CountdownChanged)
+    bool bIsCountdownRunning = false;
 };

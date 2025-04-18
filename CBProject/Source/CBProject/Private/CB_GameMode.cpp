@@ -2,8 +2,17 @@
 #include "CB_GameState.h"
 #include "CB_PlayerController.h"
 #include "CB_PlayerState.h"
+#include "DynamicCameraActor.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "CB_PlayerController.h"
+#include "CB_GameState.h"
+
+ACB_GameMode::ACB_GameMode()
+{
+	PlayerControllerClass = ACB_PlayerController::StaticClass();
+	GameStateClass = ACB_GameState::StaticClass();
+}
 
 void ACB_GameMode::BeginPlay()
 {
@@ -12,18 +21,53 @@ void ACB_GameMode::BeginPlay()
 	//맵에 배치된 SpawnPoint 태그를 가진 액터 모으기
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SpawnPoint"), SpawnPoints);
 
+	if (HasAuthority() && CameraActorClass)
+	{
+		FActorSpawnParameters Params;
+		Params.Owner = this;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		ADynamicCameraActor* Cam = GetWorld()->SpawnActor<ADynamicCameraActor>(
+			CameraActorClass, 
+			FVector(0, 0, 300), 
+			FRotator(-45, 0, 0), 
+			Params
+		);
+	
+		if (Cam)
+		{
+			Cam->SetReplicates(true);
+			Cam->SetReplicateMovement(false);
+
+			if (ACB_GameState* GS = GetGameState<ACB_GameState>())
+			{
+				GS->SharedCameraActor = Cam;
+				GS->ForceNetUpdate();
+			}
+		}
+	}
+}
+
+void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
 	if (HasAuthority())
 	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		AActor* Camera = GetWorld()->SpawnActor<AActor>(CameraActorClass, FVector(0, 0, 300), FRotator(-45, 0, 0), SpawnParams);
-	
 		ACB_GameState* GS = GetGameState<ACB_GameState>();
-		if (GS)
+		ACB_PlayerController* PC = Cast<ACB_PlayerController>(NewPlayer);
+		UE_LOG(LogTemp, Warning,
+			TEXT("PostLogin for %s (Cast %s) → camera=%s"),
+			*GetNameSafe(NewPlayer),
+			PC ? TEXT("OK") : TEXT("FAIL"),
+			*GetNameSafe(GS ? GS->SharedCameraActor : nullptr));
+
+		UE_LOG(LogTemp, Warning, TEXT("PostLogin RPC to client : %s"),
+			*GetNameSafe(GS->SharedCameraActor));
+
+		if (GS && PC && GS->SharedCameraActor)
 		{
-			GS->SharedCameraActor = Camera;
+			PC->ClientSetCamera(GS->SharedCameraActor);
 		}
 	}
 }
