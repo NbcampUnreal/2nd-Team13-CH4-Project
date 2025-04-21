@@ -11,29 +11,35 @@ ASM_Controller::ASM_Controller()
     MoveAction(nullptr),
     JumpAction(nullptr),
     DashAction(nullptr),
-    CrouchAction(nullptr),
-    //이 밑에 추가함
-    MainMenuWidgetClass(nullptr),
-    MainMenuWidgetInstance(nullptr)
-    // 이 위에 추가함
+    CrouchAction(nullptr)
 {
 }
 
-// 여기 밑에 추가함
-void ASM_Controller::ShowMainMenu()
+UCB_UIManager* ASM_Controller::GetUIManager() const
 {
-    if (MainMenuWidgetInstance)
-    {
-        MainMenuWidgetInstance->RemoveFromParent();
-        MainMenuWidgetInstance = nullptr;
-    }
+    return UIManager;
 }
-
-// 여기 위에 추가함 / 위에 생성자에도 몇개 추가함
 
 void ASM_Controller::BeginPlay()
 {
     Super::BeginPlay();
+
+    //여기 추가함 - 오상민
+    UClass* UIManagerClass = StaticLoadClass(
+        UCB_UIManager::StaticClass(),
+        nullptr,
+        TEXT("/Game/Blueprints/BP_CB_UIManager.BP_CB_UIManager_C")
+    );
+
+    if (UIManagerClass)
+    {
+        if (IsLocalPlayerController())
+        {
+            UIManager = NewObject<UCB_UIManager>(this, UIManagerClass);
+            UIManager->Initialize(this);
+            UIManager->ShowMainMenu();
+        }
+    }
 
     SetInputEnabled(true); // 테스트 중에는 true
 
