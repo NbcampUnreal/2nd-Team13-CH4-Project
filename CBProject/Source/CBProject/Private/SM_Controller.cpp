@@ -1,20 +1,37 @@
-﻿#include "CB_PlayerController.h"
+#include "SM_Controller.h"
+#include "Blueprint/UserWidget.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "CB_FigtherCharacter.h"
 #include "CB_GameState.h"
 
-ACB_PlayerController::ACB_PlayerController()
+ASM_Controller::ASM_Controller()
     : InputMappingContext(nullptr),
     MoveAction(nullptr),
     JumpAction(nullptr),
     DashAction(nullptr),
-    CrouchAction(nullptr)
+    CrouchAction(nullptr),
+    //이 밑에 추가함
+    MainMenuWidgetClass(nullptr),
+    MainMenuWidgetInstance(nullptr)
+    // 이 위에 추가함
 {
 }
 
-void ACB_PlayerController::BeginPlay()
+// 여기 밑에 추가함
+void ASM_Controller::ShowMainMenu()
+{
+    if (MainMenuWidgetInstance)
+    {
+        MainMenuWidgetInstance->RemoveFromParent();
+        MainMenuWidgetInstance = nullptr;
+    }
+}
+
+// 여기 위에 추가함 / 위에 생성자에도 몇개 추가함
+
+void ASM_Controller::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -35,7 +52,7 @@ void ACB_PlayerController::BeginPlay()
     {
         FTimerHandle TimerHandle;
         GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
-        {
+            {
                 ACB_GameState* GS = GetWorld()->GetGameState<ACB_GameState>();
                 UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay : %s"),
                     *GetNameSafe(GS->SharedCameraActor));
@@ -45,19 +62,11 @@ void ACB_PlayerController::BeginPlay()
                     UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay 1 : %s"),
                         *GetNameSafe(this));
                 }
-        }, 2.0f, false);
+            }, 1.0f, false);
     }
 }
 
-void ACB_PlayerController::ClientSetCamera_Implementation(AActor* CameraActor)
-{
-    if (CameraActor)
-    {
-        SetViewTargetWithBlend(CameraActor, 0.5f);
-    }
-}
-
-void ACB_PlayerController::SetInputEnabled(bool bEnable)
+void ASM_Controller::SetInputEnabled(bool bEnable)
 {
     if (APawn* MyPawn = GetPawn())
     {
@@ -65,7 +74,7 @@ void ACB_PlayerController::SetInputEnabled(bool bEnable)
     }
 }
 
-void ACB_PlayerController::SetupInputComponent()
+void ASM_Controller::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
@@ -73,27 +82,27 @@ void ACB_PlayerController::SetupInputComponent()
     {
         if (MoveAction)
         {
-            EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACB_PlayerController::Move);
+            EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASM_Controller::Move);
         }
         if (JumpAction)
         {
-            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ACB_PlayerController::StartJump);
-            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACB_PlayerController::StopJump);
+            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ASM_Controller::StartJump);
+            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ASM_Controller::StopJump);
         }
         if (CrouchAction)
         {
-            EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Started, this, &ACB_PlayerController::StartCrouch);
-            EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ACB_PlayerController::StopCrouch);
+            EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Started, this, &ASM_Controller::StartCrouch);
+            EnhancedInput->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ASM_Controller::StopCrouch);
         }
         if (DashAction)
         {
-            EnhancedInput->BindAction(DashAction, ETriggerEvent::Started, this, &ACB_PlayerController::StartDash);
-            EnhancedInput->BindAction(DashAction, ETriggerEvent::Completed, this, &ACB_PlayerController::StopDash);
+            EnhancedInput->BindAction(DashAction, ETriggerEvent::Started, this, &ASM_Controller::StartDash);
+            EnhancedInput->BindAction(DashAction, ETriggerEvent::Completed, this, &ASM_Controller::StopDash);
         }
     }
 }
 
-void ACB_PlayerController::Move(const FInputActionValue& Value)
+void ASM_Controller::Move(const FInputActionValue& Value)
 {
     if (APawn* ControlledPawn = GetPawn())
     {
@@ -102,7 +111,7 @@ void ACB_PlayerController::Move(const FInputActionValue& Value)
     }
 }
 
-void ACB_PlayerController::StartJump(const FInputActionValue& Value)
+void ASM_Controller::StartJump(const FInputActionValue& Value)
 {
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
@@ -110,7 +119,7 @@ void ACB_PlayerController::StartJump(const FInputActionValue& Value)
     }
 }
 
-void ACB_PlayerController::StopJump(const FInputActionValue& Value)
+void ASM_Controller::StopJump(const FInputActionValue& Value)
 {
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
@@ -118,16 +127,16 @@ void ACB_PlayerController::StopJump(const FInputActionValue& Value)
     }
 }
 
-void ACB_PlayerController::StartCrouch(const FInputActionValue& Value)
+void ASM_Controller::StartCrouch(const FInputActionValue& Value)
 {
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
         Fighter->Crouch();
-        
+
     }
 }
 
-void ACB_PlayerController::StopCrouch(const FInputActionValue& Value)
+void ASM_Controller::StopCrouch(const FInputActionValue& Value)
 {
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
@@ -135,13 +144,13 @@ void ACB_PlayerController::StopCrouch(const FInputActionValue& Value)
     }
 }
 
-void ACB_PlayerController::StartDash(const FInputActionValue& Value)
+void ASM_Controller::StartDash(const FInputActionValue& Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("Dash Start"));
 
 }
 
-void ACB_PlayerController::StopDash(const FInputActionValue& Value)
+void ASM_Controller::StopDash(const FInputActionValue& Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("Dash end"));
 }

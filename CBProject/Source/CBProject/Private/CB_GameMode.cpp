@@ -10,8 +10,7 @@
 
 ACB_GameMode::ACB_GameMode()
 {
-	PlayerControllerClass = ACB_PlayerController::StaticClass();
-	GameStateClass = ACB_GameState::StaticClass();
+
 }
 
 void ACB_GameMode::BeginPlay()
@@ -30,7 +29,7 @@ void ACB_GameMode::BeginPlay()
 		ADynamicCameraActor* Cam = GetWorld()->SpawnActor<ADynamicCameraActor>(
 			CameraActorClass, 
 			FVector(0, 0, 300), 
-			FRotator(-45, 0, 0), 
+			FRotator(0, 0, 0), 
 			Params
 		);
 	
@@ -67,7 +66,7 @@ void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
 
 		if (GS && PC && GS->SharedCameraActor)
 		{
-			PC->ClientSetCamera(GS->SharedCameraActor);
+			//PC->ClientSetCamera(GS->SharedCameraActor);
 		}
 	}
 }

@@ -15,7 +15,6 @@ ADynamicCameraActor::ADynamicCameraActor()
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->TargetArmLength = 1200.0f;
-	SpringArm->SetRelativeRotation(FRotator(-10.f, 0.f, 0.f));
 
 	//카메라 설정
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));

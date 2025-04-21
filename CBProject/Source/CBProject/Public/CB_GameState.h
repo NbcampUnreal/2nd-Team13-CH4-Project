@@ -13,7 +13,7 @@ class CBPROJECT_API ACB_GameState : public AGameStateBase
 public:
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-    UPROPERTY(ReplicatedUsing = OnRep_SharedCameraActor, EditAnywhere, BlueprintReadOnly, Category = "Camera")
+    UPROPERTY(Replicated /*= OnRep_SharedCameraActor*/, EditAnywhere, BlueprintReadOnly, Category = "Camera")
     AActor* SharedCameraActor = nullptr;
 
     UFUNCTION()
