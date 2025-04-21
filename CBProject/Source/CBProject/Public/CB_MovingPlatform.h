@@ -48,7 +48,7 @@ public:
 
 	// 각 끝 지점에서 대기할 시간 (초)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Platform|Movement", meta = (EditCondition = "bPingPong")) // bPingPong이 true일 때만 편집 가능
-	float WaitTime = 1.0f;
+	float WaitTime = 0.0f;
 
 	// 목표 지점 (액터의 초기 위치 기준 상대 좌표)
 	// MakeEditWidget을 사용하면 레벨 에디터에서 이 위치를 시각적으로 편집할 수 있습니다.
