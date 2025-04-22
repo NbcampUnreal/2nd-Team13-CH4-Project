@@ -6,7 +6,10 @@
 #include "Components/SceneComponent.h" 
 #include "Components/StaticMeshComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/BoxComponent.h"
 #include "CB_MovingPlatform.generated.h"
+
+class UBoxComponent;
 
 UCLASS()
 class CBPROJECT_API ACB_MovingPlatform : public AActor, public ICB_PlatformInterface
@@ -38,6 +41,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* PlatformMesh;
 
+	//박스 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components | Collision")
+	UBoxComponent* OneWayCollisionBox;
+	
 	// 이동 속도 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Platform|Movement")
 	float MoveSpeed = 100.0f;
