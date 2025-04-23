@@ -52,6 +52,19 @@ void UCB_UIManager::CharaterSelect()
 	SwitchToWidget(CharacterSelectMenuClass);
 }
 
+void UCB_UIManager::StartGame()
+{	
+	if (CurrentWidget)
+	{
+		CurrentWidget->RemoveFromParent();
+		CurrentWidget = nullptr;
+	}
+
+	FInputModeGameOnly InputMode;
+	OwningController->SetInputMode(InputMode);
+	OwningController->bShowMouseCursor = false;
+}
+
 void UCB_UIManager::ExitGame()
 {
 	if (OwningController)

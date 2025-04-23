@@ -22,6 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CharaterSelect();
 	UFUNCTION(BlueprintCallable)
+	void StartGame();
+	UFUNCTION(BlueprintCallable)
 	void ExitGame();
 
 protected:
