@@ -4,14 +4,20 @@
 #include "InputActionValue.h"
 #include "CB_FigtherCharacter.h"
 #include "CB_GameState.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACB_PlayerController::ACB_PlayerController()
     : InputMappingContext(nullptr),
     MoveAction(nullptr),
     JumpAction(nullptr),
     DashAction(nullptr),
-    CrouchAction(nullptr)
+    CrouchAction(nullptr),
+    bCanDash(true),
+    bIsDashing(false)
 {
+    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bStartWithTickEnabled = true;
+    SetActorTickEnabled(true);
 }
 
 void ACB_PlayerController::BeginPlay()
@@ -88,22 +94,47 @@ void ACB_PlayerController::SetupInputComponent()
         if (DashAction)
         {
             EnhancedInput->BindAction(DashAction, ETriggerEvent::Started, this, &ACB_PlayerController::StartDash);
-            EnhancedInput->BindAction(DashAction, ETriggerEvent::Completed, this, &ACB_PlayerController::StopDash);
+      
         }
     }
 }
 
 void ACB_PlayerController::Move(const FInputActionValue& Value)
 {
-    if (APawn* ControlledPawn = GetPawn())
+    if (bIsDashing) return;
+
+    FVector2D MovementVector = Value.Get<FVector2D>();
+    APawn* ControlledPawn = GetPawn();
+    if (!ControlledPawn) return;
+
+    // 대난투 스타일: 월드 기준 X축 방향(좌우) 이동만 허용
+    FVector Direction = FVector::ForwardVector; // (1, 0, 0)
+    ControlledPawn->AddMovementInput(Direction, MovementVector.X);
+
+    // 바라보는 방향 설정
+    if (MovementVector.X != 0.f)
     {
-        float AxisValue = Value.Get<float>();
-        ControlledPawn->AddMovementInput(FVector(1.f, 0.f, 0.f), AxisValue);
+        FRotator NewRotation = Direction.Rotation();
+        if (MovementVector.X < 0.f)
+            NewRotation.Yaw += 180.f;
+
+        ControlledPawn->SetActorRotation(NewRotation);
     }
 }
 
+
 void ACB_PlayerController::StartJump(const FInputActionValue& Value)
 {
+    if (bIsDashing) return;
+
+    FVector2D MovementVector = Value.Get<FVector2D>();
+    APawn* ControlledPawn = GetPawn();
+    if (ControlledPawn)
+    {
+        ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), MovementVector.Y);
+        ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), MovementVector.X);
+    }
+
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
         Fighter->Jump();
@@ -120,10 +151,22 @@ void ACB_PlayerController::StopJump(const FInputActionValue& Value)
 
 void ACB_PlayerController::StartCrouch(const FInputActionValue& Value)
 {
+    if (bIsDashing) return;
+
+    FVector2D MovementVector = Value.Get<FVector2D>();
+    APawn* ControlledPawn = GetPawn();
+    if (ControlledPawn)
+    {
+        ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), MovementVector.Y);
+        ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), MovementVector.X);
+    }
+
     if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
     {
-        Fighter->Crouch();
-        
+        if (!Fighter->GetCharacterMovement()->IsFalling())
+        {
+            Fighter->Crouch();
+        }
     }
 }
 
@@ -135,13 +178,61 @@ void ACB_PlayerController::StopCrouch(const FInputActionValue& Value)
     }
 }
 
-void ACB_PlayerController::StartDash(const FInputActionValue& Value)
+void ACB_PlayerController::Tick(float DeltaTime)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Dash Start"));
+    Super::Tick(DeltaTime);
 
+    if (bIsDashing)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Tick - Dash Active"));
+
+        APawn* ControlledPawn = GetPawn();
+        if (!ControlledPawn) return;
+
+        DashInterpAlpha += DeltaTime * (DashSpeed / DashDistance);
+        UE_LOG(LogTemp, Warning, TEXT("Tick - Dash Alpha: %f"), DashInterpAlpha);
+
+        FVector NewLocation = FMath::Lerp(DashStartLocation, DashTargetLocation, DashInterpAlpha);
+        UE_LOG(LogTemp, Warning, TEXT("New Dash Location: %s"), *NewLocation.ToString());
+
+        ControlledPawn->SetActorLocation(NewLocation, true);
+
+        if (DashInterpAlpha >= 1.f)
+        {
+            bIsDashing = false;
+            UE_LOG(LogTemp, Warning, TEXT("Dash End"));
+        }
+    }
 }
 
-void ACB_PlayerController::StopDash(const FInputActionValue& Value)
+
+void ACB_PlayerController::ResetDash()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Dash end"));
+    bCanDash = true;
+    UE_LOG(LogTemp, Warning, TEXT("Dash Ready"));
+}
+
+void ACB_PlayerController::StartDash(const FInputActionValue& Value)
+{
+    if (!bCanDash || bIsDashing)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Dash unavailable."));
+        return;
+    }
+
+    APawn* ControlledPawn = GetPawn();
+    if (!ControlledPawn) return;
+
+    bCanDash = false;
+    bIsDashing = true;
+    DashInterpAlpha = 0.f;
+
+    DashStartLocation = ControlledPawn->GetActorLocation();
+    DashTargetLocation = DashStartLocation + ControlledPawn->GetActorForwardVector() * DashDistance;
+
+    UE_LOG(LogTemp, Warning, TEXT("Dash Start"));
+    UE_LOG(LogTemp, Warning, TEXT("DashSpeed: %f, DashDistance: %f, InterpAlpha Init: %f"), DashSpeed, DashDistance, DashInterpAlpha);
+
+    // 대쉬 쿨타임 (입력 가능 여부만 관리)
+    GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 1.0f, false);
 }
