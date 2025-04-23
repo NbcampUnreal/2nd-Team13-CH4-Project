@@ -43,4 +43,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsStandingOnOneWayPlatform(UPrimitiveComponent*& OutPlatformComponent);
+
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	bool bIsDashing = false;
+
 };
