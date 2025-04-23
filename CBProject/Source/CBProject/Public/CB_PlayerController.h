@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CB_UIManager.h"
 #include "CB_PlayerWidgetContainer.h"
 #include "CB_PlayerController.generated.h"
 
@@ -22,8 +23,11 @@ public:
     void SetInputEnabled(bool bEnable);
     virtual void Tick(float DeltaTime) override;
 
-    UFUNCTION(Client, Reliable)
-    void ClientSetCamera(AActor* CameraActor);
+    UPROPERTY()
+    UCB_UIManager* UIManager;
+    UFUNCTION(BlueprintCallable, Category = "UI")
+
+    UCB_UIManager* GetUIManager() const;
 
     UFUNCTION(Client, Reliable)
     void ClientCreatePlayerInfoUI();

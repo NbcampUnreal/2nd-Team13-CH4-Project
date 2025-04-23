@@ -25,6 +25,22 @@ void ACB_PlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
+    UClass* UIManagerClass = StaticLoadClass(
+        UCB_UIManager::StaticClass(),
+        nullptr,
+        TEXT("/Game/Blueprints/BP_CB_UIManager.BP_CB_UIManager_C")
+    );
+
+    if (UIManagerClass)
+    {
+        if (IsLocalPlayerController())
+        {
+            UIManager = NewObject<UCB_UIManager>(this, UIManagerClass);
+            UIManager->Initialize(this);
+            UIManager->ShowMainMenu();
+        }
+    }
+
     SetInputEnabled(true); // 테스트 중에는 true
 
     if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
@@ -56,14 +72,10 @@ void ACB_PlayerController::BeginPlay()
     }
 }
 
-void ACB_PlayerController::ClientSetCamera_Implementation(AActor* CameraActor)
+UCB_UIManager* ACB_PlayerController::GetUIManager() const
 {
-    if (CameraActor)
-    {
-        SetViewTargetWithBlend(CameraActor, 0.5f);
-    }
+    return UIManager;
 }
-
 
 void ACB_PlayerController::SetInputEnabled(bool bEnable)
 {
