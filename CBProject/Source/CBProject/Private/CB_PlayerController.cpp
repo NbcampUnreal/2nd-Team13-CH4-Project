@@ -4,6 +4,7 @@
 #include "InputActionValue.h"
 #include "CB_FigtherCharacter.h"
 #include "CB_GameState.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CB_PlayerWidgetContainer.h"
 
@@ -109,6 +110,10 @@ void ACB_PlayerController::SetupInputComponent()
         {
             EnhancedInput->BindAction(DashAction, ETriggerEvent::Started, this, &ACB_PlayerController::StartDash);
       
+        }
+        if (DropDownAction)
+        {
+            EnhancedInput->BindAction(DropDownAction, ETriggerEvent::Triggered, this, &ACB_PlayerController::HandleDropDownInput);
         }
     }
 }
@@ -251,6 +256,15 @@ void ACB_PlayerController::StartDash(const FInputActionValue& Value)
     GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 1.0f, false);
     UE_LOG(LogTemp, Warning, TEXT("Dash end"));
 }
+
+void ACB_PlayerController::HandleDropDownInput(const FInputActionValue& Value)
+{
+    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
+    {
+        Fighter->TryPerformingDropDown();
+    }
+}
+
 
 void ACB_PlayerController::ClientCreatePlayerInfoUI_Implementation()
 {

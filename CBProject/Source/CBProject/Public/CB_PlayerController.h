@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "CB_UIManager.h"
+#include "InputActionValue.h"
 #include "CB_PlayerWidgetContainer.h"
 #include "CB_PlayerController.generated.h"
 
@@ -71,9 +72,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputAction* CrouchAction;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    UInputAction* DropDownAction;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    UInputMappingContext* DefaultMappingContext;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UCB_PlayerWidgetContainer> PlayerWidgetContainerClass;
 
+    void HandleDropDownInput(const FInputActionValue& Value);
+    
 private:
     FVector DashStartLocation;
     FVector DashTargetLocation;

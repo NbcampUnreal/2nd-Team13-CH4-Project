@@ -38,4 +38,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_Health();
+
+	void TryPerformingDropDown();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsStandingOnOneWayPlatform(UPrimitiveComponent*& OutPlatformComponent);
 };
