@@ -2,6 +2,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterMovementComponentAsync.h"
 #include "Engine/EngineTypes.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "CB_PlayerState.h"
@@ -130,39 +131,42 @@ bool ACB_FigtherCharacter::IsStandingOnOneWayPlatform(UPrimitiveComponent*& OutP
 	// 없으면 돌아가
 	if (!CMC)
 	{
-		UE_LOG(LogTemp, Error, TEXT("IsStandingOnOneWayPlatform: CharacterMovementComponent is NULL!"));
 		return false;
 	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("IsStandingOnOneWayPlatform: CMC is valid. Trying to access CurrentFloor..."));
-	}
-	
-	// 걷고 있는지 상태 확인
-	if (CMC->IsMovingOnGround())
-	{
-		// 현재 캐릭터의 발 아래 있는 바닥 정보 가져오기 
-		const FFindFloorResult& CurrentFloor = CMC->CurrentFloor;
-		UE_LOG(LogTemp, Log, TEXT("IsStandingOnOneWayPlatform: Accessed CurrentFloor successfully."));
-		// 걸을수 있는 유요한 표면인가?
-		if (CurrentFloor.IsWalkableFloor())
-		{
-			// 바닥 콜리전 컴포넌트 가져오기
-			UPrimitiveComponent* FloorComponent = CurrentFloor.HitResult.GetComponent();
-			// 컴포넌트 유효해?
-			if (FloorComponent)
-			{
-				// 발판 컴포넌트의 콜리전 오브젝트 타입 가져옴
-				ECollisionChannel FloorObjectChannel = FloorComponent->GetCollisionObjectType();
-				// 가져온 옵젝 타입이 플랫폼으로 지정한 채널과 같은지 비교
-				if (FloorObjectChannel == ECC_GameTraceChannel1)
-				{
-					// 일치하면 찾은 컴포넌트를 출력 컴포넌트에 저장
-					OutPlatformComponent = FloorComponent;
 
-					return true;
-				}
+	// 캐릭터의 캡슐 컴포넌트 가져오기 (FindFloor에 필요)
+	const UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	if (!CapsuleComp)
+	{
+		return false;
+	}
+	// 바닥 찾기 결과 정보 저장용
+	FFindFloorResult FloorResult;
+	
+	float SearchDistance = 10.0f; // 발 아래 얼마나 멀리까지 바닥을 찾을지 거리
+	bool bCanUseCachedResult = false; // 캐시된 결과 사용 안 함 (새로 찾기)
+
+	// FindFloor 함수 호출: 현재 캡슐 위치를 기준으로 아래 방향으로 바닥을 찾음
+	CMC->FindFloor(CapsuleComp->GetComponentLocation(), FloorResult, bCanUseCachedResult, nullptr);
+	
+	// FindFloor가 걸을 수 있는 유효한 바닥을 찾았는지 확인
+	if (FloorResult.IsWalkableFloor())
+	{
+		
+		// 바닥 정보를 구성하는 콜리전 컴포넌트 가져오기 (FHitResult 사용)
+		UPrimitiveComponent* FloorComponent = FloorResult.HitResult.GetComponent();
+		if (FloorComponent)
+		{
+			// 발판 컴포넌트의 콜리전 오브젝트 타입 가져오기
+			ECollisionChannel FloorObjectChannel = FloorComponent->GetCollisionObjectType();
+			
+			// 가져온 오브젝트 타입이 원웨이 플랫폼 채널(예: ECC_GameTraceChannel1)과 같은지 비교
+			if (FloorObjectChannel == ECC_GameTraceChannel1) // ECC_GameTraceChannel1은 DefaultEngine.ini 매핑 채널
+			{
+				OutPlatformComponent = FloorComponent; // 찾은 컴포넌트 저장
+				return true; // 원웨이 플랫폼 위에 있음
 			}
+			
 		}
 	}
 	// 모든 조건 통과 못하면 서 있지 않은 것으로 false반환
