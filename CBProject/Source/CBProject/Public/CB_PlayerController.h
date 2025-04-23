@@ -90,8 +90,8 @@ private:
     float DashSpeed = 2500.f;
     float DashDistance = 400.f;
 
-    bool bCanDash = true;             // Dash 가능 여부
-    bool bIsDashing = false;          // 현재 Dash 중인지
+    bool bCanDash = true;
+    bool bIsDashing = false;
     FTimerHandle DashCooldownHandle;  // 쿨타임 타이머
 
     UCB_PlayerWidgetContainer* PlayerWidgetContainer;

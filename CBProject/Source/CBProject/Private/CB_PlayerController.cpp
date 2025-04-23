@@ -220,6 +220,12 @@ void ACB_PlayerController::Tick(float DeltaTime)
         {
             bIsDashing = false;
             UE_LOG(LogTemp, Warning, TEXT("Dash End"));
+
+            if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(ControlledPawn))
+            {
+                Fighter->bIsDashing = false;
+            }
+
         }
     }
 }
@@ -248,6 +254,12 @@ void ACB_PlayerController::StartDash(const FInputActionValue& Value)
 
     DashStartLocation = ControlledPawn->GetActorLocation();
     DashTargetLocation = DashStartLocation + ControlledPawn->GetActorForwardVector() * DashDistance;
+
+    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(ControlledPawn))
+    {
+        Fighter->bIsDashing = true;
+    }
+
 
     UE_LOG(LogTemp, Warning, TEXT("Dash Start"));
     UE_LOG(LogTemp, Warning, TEXT("DashSpeed: %f, DashDistance: %f, InterpAlpha Init: %f"), DashSpeed, DashDistance, DashInterpAlpha);
