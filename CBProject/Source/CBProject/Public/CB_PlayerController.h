@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CB_PlayerWidgetContainer.h"
 #include "CB_PlayerController.generated.h"
 
 class UInputMappingContext;
@@ -23,6 +24,9 @@ public:
 
     UFUNCTION(Client, Reliable)
     void ClientSetCamera(AActor* CameraActor);
+
+    UFUNCTION(Client, Reliable)
+    void ClientCreatePlayerInfoUI();
 
 protected:
     virtual void SetupInputComponent() override; // APlayerController는 이걸 오버라이드해야 함
@@ -63,8 +67,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputAction* CrouchAction;
 
-private:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UCB_PlayerWidgetContainer> PlayerWidgetContainerClass;
 
+private:
     FVector DashStartLocation;
     FVector DashTargetLocation;
     float DashInterpAlpha = 0.f;
@@ -75,5 +81,6 @@ private:
     bool bIsDashing = false;          // 현재 Dash 중인지
     FTimerHandle DashCooldownHandle;  // 쿨타임 타이머
 
+    UCB_PlayerWidgetContainer* PlayerWidgetContainer;
 
 };

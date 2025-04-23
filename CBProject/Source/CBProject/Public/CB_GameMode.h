@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	TSubclassOf<ADynamicCameraActor> CameraActorClass;
 
+	void SetTeam(AController* NewPlayer);
+
+
 protected:
 	TArray<AActor*> SpawnPoints;
 };

@@ -16,7 +16,7 @@ public:
 	ACB_PlayerState();
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
-	int32 Lives = 3;
+	int32 Lives = 5;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Team")
 	int32 TeamIndex;

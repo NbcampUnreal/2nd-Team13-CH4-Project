@@ -5,6 +5,7 @@
 #include "CB_FigtherCharacter.h"
 #include "CB_GameState.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "CB_PlayerWidgetContainer.h"
 
 ACB_PlayerController::ACB_PlayerController()
     : InputMappingContext(nullptr),
@@ -62,6 +63,7 @@ void ACB_PlayerController::ClientSetCamera_Implementation(AActor* CameraActor)
         SetViewTargetWithBlend(CameraActor, 0.5f);
     }
 }
+
 
 void ACB_PlayerController::SetInputEnabled(bool bEnable)
 {
@@ -235,4 +237,30 @@ void ACB_PlayerController::StartDash(const FInputActionValue& Value)
 
     // 대쉬 쿨타임 (입력 가능 여부만 관리)
     GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 1.0f, false);
+    UE_LOG(LogTemp, Warning, TEXT("Dash end"));
+}
+
+void ACB_PlayerController::ClientCreatePlayerInfoUI_Implementation()
+{
+    if (IsLocalController())
+    {
+        if (PlayerWidgetContainerClass)
+        {
+            PlayerWidgetContainer = CreateWidget<UCB_PlayerWidgetContainer>(this, PlayerWidgetContainerClass);
+            if (PlayerWidgetContainer)
+            {
+                PlayerWidgetContainer->AddToViewport();
+                PlayerWidgetContainer->UpdatePlayerList();
+            }
+            else
+            {
+                UE_LOG(LogTemp, Display, TEXT("PlayerWidgetContainer Create fail"));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Display, TEXT("PlayerWidgetContainerClass Not invalid"));
+
+        }
+    }
 }
