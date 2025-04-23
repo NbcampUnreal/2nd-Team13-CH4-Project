@@ -64,10 +64,16 @@ void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
 		UE_LOG(LogTemp, Warning, TEXT("PostLogin RPC to client : %s"),
 			*GetNameSafe(GS->SharedCameraActor));
 
+		if (!GS)
+		{
+			return;
+		}
+
 		if (GS && PC && GS->SharedCameraActor)
 		{
 			//PC->ClientSetCamera(GS->SharedCameraActor);
 		}
+
 	}
 }
 
@@ -180,6 +186,37 @@ void ACB_GameMode::HandlePlayerDeath(AController* DeadController)
 void ACB_GameMode::OnRep_CountdownChanged()
 {
 	// 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
+}
+
+void ACB_GameMode::SetTeam(AController* NewPlayer)
+{
+	int32 TeamForPlayer = GetNumPlayers() % 2;
+
+	if (ACB_PlayerState* PS = NewPlayer->GetPlayerState<ACB_PlayerState>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("플레이어 %s를 팀 %d에 배정"), *NewPlayer->GetName(), TeamForPlayer);
+		PS->TeamIndex = TeamForPlayer;
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, [this, NewPlayer]()
+			{
+				ACB_PlayerController* PC = Cast<ACB_PlayerController>(NewPlayer);
+				if (PC)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Client Player Info UI"));
+					PC->ClientCreatePlayerInfoUI();
+
+					for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+					{
+						ACB_PlayerController* OtherPC = Cast<ACB_PlayerController>(*It);
+						if (OtherPC && OtherPC != PC)
+						{
+							OtherPC->ClientCreatePlayerInfoUI();
+						}
+					}
+				}
+			}, 1.0f, false);
+	}
 }
 
 void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

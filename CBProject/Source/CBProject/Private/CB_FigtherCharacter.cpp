@@ -13,7 +13,7 @@ ACB_FigtherCharacter::ACB_FigtherCharacter()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	bReplicates = true;
 	MaxHealth = 100.f;
-	CurrentHealth = MaxHealth;
+	CurrentHealth = 30.f;
 }
 
 void ACB_FigtherCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
