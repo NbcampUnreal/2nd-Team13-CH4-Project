@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CB_UIManager.h"
 #include "SM_Controller.generated.h"
 
 class UInputMappingContext;
@@ -21,15 +22,11 @@ public:
     void SetInputEnabled(bool bEnable);
 
     // 여기 밑에만 추가함
+    UPROPERTY()
+    UCB_UIManager* UIManager;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu")
-    TSubclassOf<UUserWidget> MainMenuWidgetClass;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Menu")
-    UUserWidget* MainMenuWidgetInstance;
-
-    UFUNCTION(BlueprintCallable, Category = "Menu")
-    void ShowMainMenu();
-
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    UCB_UIManager* GetUIManager() const;
     //여기 위에만 추가함
 
 protected:
