@@ -20,6 +20,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowSettings();
 	UFUNCTION(BlueprintCallable)
+	void CharaterSelect();
+	UFUNCTION(BlueprintCallable)
 	void ExitGame();
 
 protected:
@@ -33,6 +35,8 @@ protected:
 	TSubclassOf<UUserWidget> SelectMenuClass;
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> SettingMenuClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> CharacterSelectMenuClass;
 
 	void SwitchToWidget(TSubclassOf<UUserWidget> WidgetClass);
 };

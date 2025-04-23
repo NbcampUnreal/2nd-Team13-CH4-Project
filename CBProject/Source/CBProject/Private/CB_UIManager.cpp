@@ -47,6 +47,11 @@ void UCB_UIManager::ShowSettings()
 	SwitchToWidget(SettingMenuClass);
 }
 
+void UCB_UIManager::CharaterSelect()
+{
+	SwitchToWidget(CharacterSelectMenuClass);
+}
+
 void UCB_UIManager::ExitGame()
 {
 	if (OwningController)
