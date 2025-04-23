@@ -10,18 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-<<<<<<< HEAD
-<<<<<<< HEAD
 				"UMG",
 				"CoreUObject"
-=======
-				"CoreUObject",
-				"UMG"
->>>>>>> 5da1f7f (Character Slot 작업)
-=======
-				"CoreUObject",
-				"UMG"
->>>>>>> ba81baff281f8a1c424d23d7fbe1458170777ef8
 			]
 		}
 	],
