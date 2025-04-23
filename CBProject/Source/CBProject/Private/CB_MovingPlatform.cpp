@@ -1,7 +1,12 @@
 #include "CB_MovingPlatform.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+#include "CollisionQueryParams.h"
+#include "CollisionShape.h"
+#include "Engine/CollisionProfile.h"
 #include "Net/UnrealNetwork.h"
+#include "Engine/EngineTypes.h"
 
 ACB_MovingPlatform::ACB_MovingPlatform()
 {
@@ -18,7 +23,48 @@ ACB_MovingPlatform::ACB_MovingPlatform()
 	// 스태틱 메시 컴포넌트 생성
 	PlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
 	PlatformMesh->SetupAttachment(RootComponent);
+	PlatformMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	OneWayCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("OneWayCollision"));
+	OneWayCollisionBox->SetupAttachment(RootComponent);
+	OneWayCollisionBox->SetRelativeLocation(FVector(0, 0, 10.0f));
+	OneWayCollisionBox->SetBoxExtent(FVector(50.0f, 100.0f, 5.0f));
+	
+	OneWayCollisionBox->SetCollisionProfileName(TEXT("Custom"));
+	OneWayCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	OneWayCollisionBox->SetCanEverAffectNavigation(false);
+
+	// 타입을 명시적으로 지정
+	OneWayCollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+
+	// 기본적으로 모든 채널 반응 무시
+	OneWayCollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	// Pawn 채널에 대해서만 Overlap으로 설정
+	OneWayCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	// Visibility 채널은 Block으로 설정
+	OneWayCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	
+	// ECollisionChannel OneWayPlatformChannel = UCollisionProfile::Get()->ECC_GameTraceChannel1(FName("OneWayPlatform"));
+	// if (OneWayPlatformChannel == ECC_Unknown)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("OneWayPlatform object channel not found in Project Settings! Please create it. Using WorldStatic as fallback."));
+	// 	OneWayCollisionBox->SetCollisionObjectType(ECC_WorldStatic); // 임시 대체
+	// }
+	// else
+	// {
+	// 	OneWayCollisionBox->SetCollisionObjectType(OneWayPlatformChannel); // 이 박스를 OneWayPlatform 타입으로 설정
+	// }
+
+	OneWayCollisionBox->SetCollisionObjectType(ECC_GameTraceChannel1);
+	
+	// 기본적으로 모든 채널 반응 무시
+	OneWayCollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	// Pawn 채널에 대해서만 Overlap으로 설정 (캐릭터 캡슐이 통과하도록)
+	OneWayCollisionBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	// (선택) Visibility 채널은 Block (라인 트레이스 등에 감지되도록)
+	OneWayCollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
+	// 리플리케이션 설정
 	bReplicates = true;
 	bIsActive = bStartActive;
 }
