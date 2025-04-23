@@ -19,6 +19,7 @@ public:
     ACB_PlayerController();
     virtual void BeginPlay() override;
     void SetInputEnabled(bool bEnable);
+    virtual void Tick(float DeltaTime) override;
 
     UFUNCTION(Client, Reliable)
     void ClientSetCamera(AActor* CameraActor);
@@ -44,8 +45,7 @@ protected:
     UFUNCTION()
     void StartDash(const FInputActionValue& Value);
 
-    UFUNCTION()
-    void StopDash(const FInputActionValue& Value);
+    void ResetDash();
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -62,4 +62,18 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputAction* CrouchAction;
+
+private:
+
+    FVector DashStartLocation;
+    FVector DashTargetLocation;
+    float DashInterpAlpha = 0.f;
+    float DashSpeed = 2500.f;
+    float DashDistance = 400.f;
+
+    bool bCanDash = true;             // Dash 가능 여부
+    bool bIsDashing = false;          // 현재 Dash 중인지
+    FTimerHandle DashCooldownHandle;  // 쿨타임 타이머
+
+
 };
