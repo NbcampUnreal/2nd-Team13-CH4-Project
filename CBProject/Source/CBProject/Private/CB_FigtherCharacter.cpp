@@ -17,6 +17,8 @@ ACB_FigtherCharacter::ACB_FigtherCharacter()
 	bReplicates = true;
 	MaxHealth = 100.f;
 	CurrentHealth = 30.f;
+
+
 }
 
 void ACB_FigtherCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -17,4 +17,7 @@ class CBPROJECT_API UCB_GameInstance : public UGameInstance
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
 	int32 GameSelect = 0; //0 = 싱글, 1 = 멀티, 2 = 협동
+
+	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
+	bool bIsTeamMatch = false; // 팀전 여부
 };

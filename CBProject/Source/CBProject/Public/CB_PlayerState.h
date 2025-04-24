@@ -16,10 +16,18 @@ public:
 	ACB_PlayerState();
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
-	int32 Lives = 5;
+	int32 Lives;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	int32 CharacterIndex;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Team")
 	int32 TeamIndex;
+
+	void SetPlayerLives(int32 NewLives);
+	void SetPlayerCharacterIndex(int32 NewCharacterIndex);
+	void SetPlayerTeam(int32 NewTeamIndex);
+
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

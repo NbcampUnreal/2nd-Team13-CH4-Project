@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "CB_PlayerController.h"
 #include "CB_GameState.h"
+#include "CB_GameInstance.h"
 
 ACB_GameMode::ACB_GameMode()
 {
@@ -188,13 +189,54 @@ void ACB_GameMode::OnRep_CountdownChanged()
 	// 클라에서 UI 반영 용도 (HUD에서 타이머 시작)
 }
 
-void ACB_GameMode::SetTeam(AController* NewPlayer)
-{
-	int32 TeamForPlayer = GetNumPlayers() % 2;
-
-	if (ACB_PlayerState* PS = NewPlayer->GetPlayerState<ACB_PlayerState>())
+void ACB_GameMode::SetTeamByMode()
+{	
+	UCB_GameInstance* GI = Cast<UCB_GameInstance>(GetGameInstance());
+	for (APlayerState* State : GameState->PlayerArray)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("플레이어 %s를 팀 %d에 배정"), *NewPlayer->GetName(), TeamForPlayer);
+		ACB_PlayerState* PS = Cast<ACB_PlayerState>(State);
+		if (PS && GI)
+		{
+			switch (GI->GameSelect)
+			{
+			case 0: //싱글
+			{
+				PS->SetPlayerTeam(0);
+				break;
+			}
+			case 1: //멀티
+			{
+				int32 PlayerNum = GetNumPlayers();
+				if (GI->bIsTeamMatch)
+				{
+					PS->SetPlayerTeam(PlayerNum % 2);
+				}
+				else
+				{
+					PS->SetPlayerTeam(PlayerNum);
+				}
+				break;
+			}
+			case 2: //협동
+			{
+				PS->SetPlayerTeam(0);
+				break;
+			}
+			default:
+			{
+				PS->SetPlayerTeam(0);
+				break;
+			}
+			}
+		}
+	}
+
+	/*int32 TeamForPlayer = GetNumPlayers() % 2;
+
+	UCB_GameInstance* GI = Cast<UCB_GameInstance>(GetGameInstance());
+	ACB_PlayerState* PS = NewPlayer->GetPlayerState<ACB_PlayerState>();
+	if (GI && PS)
+	{
 		PS->TeamIndex = TeamForPlayer;
 
 		FTimerHandle TimerHandle;
@@ -216,8 +258,11 @@ void ACB_GameMode::SetTeam(AController* NewPlayer)
 					}
 				}
 			}, 1.0f, false);
-	}
+
+		UE_LOG(LogTemp, Warning, TEXT("플레이어 %s를 팀 %d에 배정"), *NewPlayer->GetName(), TeamForPlayer);
+	}*/
 }
+
 
 void ACB_GameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

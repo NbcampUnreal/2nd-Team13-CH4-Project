@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	TSubclassOf<ADynamicCameraActor> CameraActorClass;
 
-	void SetTeam(AController* NewPlayer);
+	void SetTeamByMode();
 
 
 protected:
