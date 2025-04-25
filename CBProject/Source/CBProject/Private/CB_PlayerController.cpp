@@ -14,6 +14,8 @@ ACB_PlayerController::ACB_PlayerController()
     JumpAction(nullptr),
     DashAction(nullptr),
     CrouchAction(nullptr),
+    PunchAction(nullptr),
+    KickAction(nullptr),
     bCanDash(true),
     bIsDashing(false)
 {
@@ -115,6 +117,14 @@ void ACB_PlayerController::SetupInputComponent()
         {
             EnhancedInput->BindAction(DropDownAction, ETriggerEvent::Triggered, this, &ACB_PlayerController::HandleDropDownInput);
         }
+        if (PunchAction)
+        {
+            EnhancedInput->BindAction(PunchAction, ETriggerEvent::Started, this, &ACB_PlayerController::AttackPunch);
+        }
+        if (KickAction)
+        {
+            EnhancedInput->BindAction(KickAction, ETriggerEvent::Started, this, &ACB_PlayerController::AttackKick);
+        }
     }
 }
 
@@ -203,29 +213,21 @@ void ACB_PlayerController::Tick(float DeltaTime)
 
     if (bIsDashing)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Tick - Dash Active"));
-
         APawn* ControlledPawn = GetPawn();
         if (!ControlledPawn) return;
 
         DashInterpAlpha += DeltaTime * (DashSpeed / DashDistance);
-        UE_LOG(LogTemp, Warning, TEXT("Tick - Dash Alpha: %f"), DashInterpAlpha);
-
         FVector NewLocation = FMath::Lerp(DashStartLocation, DashTargetLocation, DashInterpAlpha);
-        UE_LOG(LogTemp, Warning, TEXT("New Dash Location: %s"), *NewLocation.ToString());
-
         ControlledPawn->SetActorLocation(NewLocation, true);
 
         if (DashInterpAlpha >= 1.f)
         {
             bIsDashing = false;
-            UE_LOG(LogTemp, Warning, TEXT("Dash End"));
 
             if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(ControlledPawn))
             {
                 Fighter->bIsDashing = false;
             }
-
         }
     }
 }
@@ -234,14 +236,12 @@ void ACB_PlayerController::Tick(float DeltaTime)
 void ACB_PlayerController::ResetDash()
 {
     bCanDash = true;
-    UE_LOG(LogTemp, Warning, TEXT("Dash Ready"));
 }
 
 void ACB_PlayerController::StartDash(const FInputActionValue& Value)
 {
     if (!bCanDash || bIsDashing)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Dash unavailable."));
         return;
     }
 
@@ -260,13 +260,7 @@ void ACB_PlayerController::StartDash(const FInputActionValue& Value)
         Fighter->bIsDashing = true;
     }
 
-
-    UE_LOG(LogTemp, Warning, TEXT("Dash Start"));
-    UE_LOG(LogTemp, Warning, TEXT("DashSpeed: %f, DashDistance: %f, InterpAlpha Init: %f"), DashSpeed, DashDistance, DashInterpAlpha);
-
-    // 대쉬 쿨타임 (입력 가능 여부만 관리)
     GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 1.0f, false);
-    UE_LOG(LogTemp, Warning, TEXT("Dash end"));
 }
 
 void ACB_PlayerController::HandleDropDownInput(const FInputActionValue& Value)
@@ -300,5 +294,46 @@ void ACB_PlayerController::ClientCreatePlayerInfoUI_Implementation()
             UE_LOG(LogTemp, Display, TEXT("PlayerWidgetContainerClass Not invalid"));
 
         }
+    }
+}
+
+void ACB_PlayerController::AttackPunch(const FInputActionValue& Value)
+{
+    
+    if (bIsDashing)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("InputMappingContext is NULL!"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("J key pressed!"));
+
+    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
+    {
+        ECharacterState State = Fighter->GetCurrentCharacterState();
+
+        UE_LOG(LogTemp, Warning, TEXT("[Attack] Punch input received, State: %d"), (uint8)State);
+
+        Fighter->ServerPunch(State);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot attack while dashing"));
+    }
+}
+
+
+void ACB_PlayerController::AttackKick(const FInputActionValue& Value)
+{
+    if (bIsDashing) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("K key pressed!"));
+
+    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(GetPawn()))
+    {
+        ECharacterState State = Fighter->GetCurrentCharacterState();
+        UE_LOG(LogTemp, Warning, TEXT("[Attack] Kick input received, State: %d"), (uint8)State);
+
+        Fighter->ServerKick(State);
     }
 }
