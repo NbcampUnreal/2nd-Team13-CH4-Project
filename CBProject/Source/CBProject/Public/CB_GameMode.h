@@ -18,8 +18,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	int32 CountdownTime;
-	void StartPlay();
 	void TickCountdown();
+	UFUNCTION(BlueprintCallable)
 	void StartGame();
 	void UpdateCountdownUI();
 	void RespawnPlayer(AController* Controller);

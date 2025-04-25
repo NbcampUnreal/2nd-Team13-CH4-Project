@@ -54,11 +54,59 @@ void UCB_UIManager::CharaterSelect()
 
 void UCB_UIManager::StartGame()
 {	
-	if (CurrentWidget)
+	SwitchToWidget(BattleUI);
+}
+
+void UCB_UIManager::ShowCountdownWidget()
+{
+	if (!CountdownWidgetClass || !OwningController)
+		return;
+
+	if (CountdownWidget)
 	{
-		CurrentWidget->RemoveFromParent();
-		CurrentWidget = nullptr;
+		CountdownWidget->RemoveFromParent();
+		CountdownWidget = nullptr;
 	}
+
+	CountdownWidget = CreateWidget<UUserWidget>(OwningController, CountdownWidgetClass);
+	if (CountdownWidget)
+	{
+		CountdownWidget->AddToViewport();
+	}
+}
+
+void UCB_UIManager::UpdateCountdown(int32 CountdownTime)
+{
+	if (!CountdownWidget) return;
+
+	FName TextureKey;
+	switch (CountdownTime)
+	{
+	case 3: TextureKey = TEXT("Texture_3"); break;
+	case 2: TextureKey = TEXT("Texture_2"); break;
+	case 1: TextureKey = TEXT("Texture_1"); break;
+	case 0: TextureKey = TEXT("Texture_Fight"); break;
+	default: return;
+	}
+
+	UFunction* SetImageFunc = CountdownWidget->FindFunction(FName("SetCountdownImageByName"));
+	if (SetImageFunc)
+	{
+		struct FSetImageParam { FName ImageKey; };
+		FSetImageParam Params{ TextureKey };
+		CountdownWidget->ProcessEvent(SetImageFunc, &Params);
+	}
+}
+
+void UCB_UIManager::RemoveCountdownWidget()
+{
+	if (CountdownWidget)
+	{
+		CountdownWidget->RemoveFromParent();
+		CountdownWidget = nullptr;
+	}
+
+	//서영님 UI 부분 집어넣으면 됨
 
 	FInputModeGameOnly InputMode;
 	OwningController->SetInputMode(InputMode);
