@@ -24,6 +24,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartGame();
 	UFUNCTION(BlueprintCallable)
+	void UpdateCountdown(int32 CountdownTime);
+	UFUNCTION(BlueprintCallable)
+	void ShowCountdownWidget();
+	UFUNCTION(BlueprintCallable)
+	void RemoveCountdownWidget();
+	UFUNCTION(BlueprintCallable)
 	void ExitGame();
 
 protected:
@@ -39,6 +45,13 @@ protected:
 	TSubclassOf<UUserWidget> SettingMenuClass;
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> CharacterSelectMenuClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> CountdownWidgetClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> BattleUI;
+
+	UUserWidget* CountdownWidget = nullptr;
+
 
 	void SwitchToWidget(TSubclassOf<UUserWidget> WidgetClass);
 };

@@ -78,20 +78,29 @@ void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
-void ACB_GameMode::StartPlay()
+
+void ACB_GameMode::StartGame()
 {
-	Super::StartPlay();
+	CountdownTime = 4;
 
-	CountdownTime = 3;
-
-	UpdateCountdownUI();
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (ACB_PlayerController* PlayerController = Cast<ACB_PlayerController>(*It))
+		{
+			if (UCB_UIManager* UI = PlayerController->GetUIManager())
+			{
+				UI->ShowCountdownWidget();     // 위젯 생성 및 표시
+				UI->UpdateCountdown(CountdownTime); // 4 → 3 이미지로 시작
+			}
+		}
+	}
 
 	// 카운트 다운 시작(3초)
 	GetWorldTimerManager().SetTimer(
-		CountdownTimerHandle, 
-		this, 
-		&ACB_GameMode::TickCountdown, 
-		1.0f, 
+		CountdownTimerHandle,
+		this,
+		&ACB_GameMode::TickCountdown,
+		1.0f,
 		true);
 
 	//GameState에 카운트 다운 시작 알림
@@ -100,6 +109,7 @@ void ACB_GameMode::StartPlay()
 		CB_GameState->bIsCountdownRunning = true;
 	}
 }
+
 
 void ACB_GameMode::TickCountdown()
 {
@@ -110,38 +120,38 @@ void ACB_GameMode::TickCountdown()
 	if (CountdownTime < 0)
 	{
 		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
-		StartGame();
+
+		//모든 플레이어 입력 활성화
+		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+		{
+			if (ACB_PlayerController* PlayerController = Cast<ACB_PlayerController>(*It))
+			{
+				if (UCB_UIManager* UI = PlayerController->GetUIManager())
+				{
+					UI->RemoveCountdownWidget(); // 카운트다운 UI 제거
+					UI->StartGame();             // 전투 UI로 전환
+				}
+				PlayerController->SetInputEnabled(true); // 플레이어 입력 활성화
+			}
+		}
+	}
+
+	if (ACB_GameState* CB_GameState = GetGameState<ACB_GameState>())
+	{
+		CB_GameState->bIsCountdownRunning = false;
 	}
 }
 
 void ACB_GameMode::UpdateCountdownUI()
 {
-	//for (APlayerController* PC : TActorRange<APlayerController>(GetWorld()))
-	//{
-	//	if (ACB_PlayerController* CB_PC = Cast<ACB_PlayerController>(PC))
-	//	{
-	//		if (UCB_CountdownWidget* CountdownWidget = CB_PC->GetCountdownWidget())
-	//		{
-	//			CountdownWidget->UpdateCountdownImage(CountdownTime);
-	//		}
-	//	}
-	//}
-}
-
-void ACB_GameMode::StartGame()
-{
-	if (ACB_GameState* CB_GameState = GetGameState<ACB_GameState>())
-	{
-		CB_GameState->bIsCountdownRunning = false;
-	}
-
-	//모든 플레이어 입력 활성화
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
-		ACB_PlayerController* PlayerController = Cast<ACB_PlayerController>(*It);
-		if (PlayerController)
+		if (ACB_PlayerController* PlayerController = Cast<ACB_PlayerController>(*It))
 		{
-			PlayerController->SetInputEnabled(true);
+			if (UCB_UIManager* UI = PlayerController->GetUIManager())
+			{
+				UI->UpdateCountdown(CountdownTime); // 이미지 변경
+			}
 		}
 	}
 }
