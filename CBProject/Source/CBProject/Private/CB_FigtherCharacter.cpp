@@ -60,10 +60,13 @@ void ACB_FigtherCharacter::ReceiveHeal(float HealAmount)
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("HP: %f"), CurrentHealth));
 }
 
-void ACB_FigtherCharacter::Attack_Implementation()
+void ACB_FigtherCharacter::ServerPunch_Implementation(ECharacterState State)
 {
-	MulticastPlayAttackAnim();
 
+	// 애니메이션 동기화
+	MulticastPlayAttackAnim(EAttackType::Punch, State);
+
+	// 공격 판정
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorForwardVector() * 200.0f;
 
@@ -73,8 +76,7 @@ void ACB_FigtherCharacter::Attack_Implementation()
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, QueryParams))
 	{
-		ACB_FigtherCharacter* Target = Cast<ACB_FigtherCharacter>(HitResult.GetActor());
-		if (Target)
+		if (ACB_FigtherCharacter* Target = Cast<ACB_FigtherCharacter>(HitResult.GetActor()))
 		{
 			ACB_PlayerState* MyPS = Cast<ACB_PlayerState>(GetPlayerState());
 			ACB_PlayerState* TargetPS = Cast<ACB_PlayerState>(Target->GetPlayerState());
@@ -82,20 +84,90 @@ void ACB_FigtherCharacter::Attack_Implementation()
 			if (MyPS && TargetPS && MyPS->TeamIndex != TargetPS->TeamIndex)
 			{
 				FDamageEvent DamageEvent;
-				Target->TakeDamage(100.0f, DamageEvent, GetController(), this);
+				Target->TakeDamage(30.0f, DamageEvent, GetController(), this);
 			}
 		}
 	}
 }
 
-
-void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation()
+void ACB_FigtherCharacter::ServerKick_Implementation(ECharacterState State)
 {
-	//if (AttackMontage)
-	//{
-	//	PlayAnimMontage(AttackMontage);
-	//}
+	UE_LOG(LogTemp, Warning, TEXT("[Attack] Kick input received, State: %d"), (uint8)State);
+
+
+	MulticastPlayAttackAnim(EAttackType::Kick, State);
+
+	// 공격 판정 - 펀치와 동일하지만 데미지만 다름
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * 250.0f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, QueryParams))
+	{
+		if (ACB_FigtherCharacter* Target = Cast<ACB_FigtherCharacter>(HitResult.GetActor()))
+		{
+			ACB_PlayerState* MyPS = Cast<ACB_PlayerState>(GetPlayerState());
+			ACB_PlayerState* TargetPS = Cast<ACB_PlayerState>(Target->GetPlayerState());
+
+			if (MyPS && TargetPS && MyPS->TeamIndex != TargetPS->TeamIndex)
+			{
+				FDamageEvent DamageEvent;
+				Target->TakeDamage(50.0f, DamageEvent, GetController(), this);  //  킥은 데미지를 다르게
+			}
+		}
+	}
 }
+
+void ACB_FigtherCharacter::MulticastPlayAttackAnim_Implementation(EAttackType AttackType, ECharacterState State)
+{
+	UAnimMontage* MontageToPlay = nullptr;
+
+	if (AttackType == EAttackType::Punch)
+	{
+		switch (State)
+		{
+		case ECharacterState::Standing:
+			MontageToPlay = StandingPunchMontage;
+			break;
+		case ECharacterState::Crouching:
+			MontageToPlay = CrouchPunchMontage;
+			break;
+		case ECharacterState::Jumping:
+			MontageToPlay = JumpPunchMontage;
+			break;
+		}
+	}
+	else if (AttackType == EAttackType::Kick)
+	{
+		switch (State)
+		{
+		case ECharacterState::Standing:
+			MontageToPlay = StandingKickMontage;
+			break;
+		case ECharacterState::Crouching:
+			MontageToPlay = CrouchKickMontage;
+			break;
+		case ECharacterState::Jumping:
+			MontageToPlay = JumpKickMontage;
+			break;
+		}
+	}
+
+	if (MontageToPlay)
+	{
+		PlayAnimMontage(MontageToPlay);
+		UE_LOG(LogTemp, Warning, TEXT("Playing Montage: %s"), *MontageToPlay->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No valid montage found for this attack."));
+	}
+}
+
+
 
 
 void ACB_FigtherCharacter::OnRep_Health()
@@ -171,4 +243,18 @@ bool ACB_FigtherCharacter::IsStandingOnOneWayPlatform(UPrimitiveComponent*& OutP
 	}
 	// 모든 조건 통과 못하면 서 있지 않은 것으로 false반환
 	return false;
+}
+
+ECharacterState ACB_FigtherCharacter::GetCurrentCharacterState() const
+{
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return ECharacterState::Jumping;
+	}
+	else if (bIsCrouched)
+	{
+		return ECharacterState::Crouching;
+	}
+
+	return ECharacterState::Standing;
 }

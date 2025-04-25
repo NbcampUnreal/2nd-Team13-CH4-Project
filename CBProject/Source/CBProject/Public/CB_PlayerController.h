@@ -56,6 +56,12 @@ protected:
 
     void ResetDash();
 
+    UFUNCTION()
+    void AttackPunch(const FInputActionValue& Value);
+
+    UFUNCTION()
+    void AttackKick(const FInputActionValue& Value);
+
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputMappingContext* InputMappingContext;
@@ -80,6 +86,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UCB_PlayerWidgetContainer> PlayerWidgetContainerClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* PunchAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* KickAction;
 
     void HandleDropDownInput(const FInputActionValue& Value);
     
