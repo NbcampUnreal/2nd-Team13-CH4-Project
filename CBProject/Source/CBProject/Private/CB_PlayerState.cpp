@@ -20,6 +20,11 @@ void ACB_PlayerState::SetPlayerCharacterIndex(int32 NewCharacterIndex)
     CharacterIndex = NewCharacterIndex;
 }
 
+void ACB_PlayerState::SetPlayerName(FString NewPlayerName)
+{
+	PlayerName = NewPlayerName;
+}
+
 void ACB_PlayerState::SetPlayerTeam(int32 NewTeamIndex)
 {
     TeamIndex = NewTeamIndex;

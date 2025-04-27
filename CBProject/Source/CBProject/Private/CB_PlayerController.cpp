@@ -80,6 +80,16 @@ UCB_UIManager* ACB_PlayerController::GetUIManager() const
     return UIManager;
 }
 
+void ACB_PlayerController::ServerStartGame_Implementation()
+{
+    MulticastStartGame();
+}
+
+void ACB_PlayerController::MulticastStartGame_Implementation()
+{
+    UE_LOG(LogTemp, Warning, TEXT("모든 클라이언트에 게임 시작"));
+}
+
 void ACB_PlayerController::SetInputEnabled(bool bEnable)
 {
     if (APawn* MyPawn = GetPawn())

@@ -21,11 +21,15 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 CharacterIndex;
 
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FString PlayerName;
+
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Team")
 	int32 TeamIndex;
 
 	void SetPlayerLives(int32 NewLives);
 	void SetPlayerCharacterIndex(int32 NewCharacterIndex);
+	void SetPlayerName(FString NewPlayerName);
 	void SetPlayerTeam(int32 NewTeamIndex);
 
 

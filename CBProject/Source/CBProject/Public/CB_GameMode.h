@@ -38,6 +38,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	TSubclassOf<ADynamicCameraActor> CameraActorClass;
 
+	//UFUNCTION(Server, Reliable)
 	void SetTeamByMode();
 
 

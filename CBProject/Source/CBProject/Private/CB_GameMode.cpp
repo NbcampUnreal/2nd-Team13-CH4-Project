@@ -76,6 +76,17 @@ void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
 		}
 
 	}
+	UE_LOG(LogTemp, Display, TEXT("PostLogin"));
+	ACB_PlayerState* CBPS = Cast<ACB_PlayerState>(NewPlayer->PlayerState);
+	if (CBPS)
+	{
+		static int32 NameCounter = 1; // 플레이어별 번호 붙이기
+
+		CBPS->PlayerName = FString::Printf(TEXT("Player %d"), NameCounter++);
+
+		// 디버깅용
+		UE_LOG(LogTemp, Display, TEXT("PostLogin Set PlayerNameString: %s"), *CBPS->PlayerName);
+	}
 }
 
 
@@ -202,19 +213,29 @@ void ACB_GameMode::OnRep_CountdownChanged()
 void ACB_GameMode::SetTeamByMode()
 {	
 	UCB_GameInstance* GI = Cast<UCB_GameInstance>(GetGameInstance());
-	for (APlayerState* State : GameState->PlayerArray)
+
+	if (!GI)
 	{
-		ACB_PlayerState* PS = Cast<ACB_PlayerState>(State);
-		if (PS && GI)
+		return;
+	}
+
+	if (GI->GameSelect == 0 || GI->GameSelect)
+	{
+		for (APlayerState* State : GameState->PlayerArray)
 		{
-			switch (GI->GameSelect)
-			{
-			case 0: //싱글
+			ACB_PlayerState* PS = Cast<ACB_PlayerState>(State);
+			if (PS)
 			{
 				PS->SetPlayerTeam(0);
-				break;
 			}
-			case 1: //멀티
+		}
+	}
+	else if (GI->GameSelect == 1)
+	{
+		for (APlayerState* State : GameState->PlayerArray)
+		{
+			ACB_PlayerState* PS = Cast<ACB_PlayerState>(State);
+			if (PS)
 			{
 				int32 PlayerNum = GetNumPlayers();
 				if (GI->bIsTeamMatch)
@@ -225,52 +246,9 @@ void ACB_GameMode::SetTeamByMode()
 				{
 					PS->SetPlayerTeam(PlayerNum);
 				}
-				break;
-			}
-			case 2: //협동
-			{
-				PS->SetPlayerTeam(0);
-				break;
-			}
-			default:
-			{
-				PS->SetPlayerTeam(0);
-				break;
-			}
 			}
 		}
 	}
-
-	/*int32 TeamForPlayer = GetNumPlayers() % 2;
-
-	UCB_GameInstance* GI = Cast<UCB_GameInstance>(GetGameInstance());
-	ACB_PlayerState* PS = NewPlayer->GetPlayerState<ACB_PlayerState>();
-	if (GI && PS)
-	{
-		PS->TeamIndex = TeamForPlayer;
-
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, [this, NewPlayer]()
-			{
-				ACB_PlayerController* PC = Cast<ACB_PlayerController>(NewPlayer);
-				if (PC)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Client Player Info UI"));
-					PC->ClientCreatePlayerInfoUI();
-
-					for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-					{
-						ACB_PlayerController* OtherPC = Cast<ACB_PlayerController>(*It);
-						if (OtherPC && OtherPC != PC)
-						{
-							OtherPC->ClientCreatePlayerInfoUI();
-						}
-					}
-				}
-			}, 1.0f, false);
-
-		UE_LOG(LogTemp, Warning, TEXT("플레이어 %s를 팀 %d에 배정"), *NewPlayer->GetName(), TeamForPlayer);
-	}*/
 }
 
 
