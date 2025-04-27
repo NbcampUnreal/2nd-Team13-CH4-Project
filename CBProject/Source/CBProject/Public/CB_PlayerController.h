@@ -27,8 +27,13 @@ public:
     UPROPERTY()
     UCB_UIManager* UIManager;
     UFUNCTION(BlueprintCallable, Category = "UI")
-
     UCB_UIManager* GetUIManager() const;
+
+    UFUNCTION(Server, Reliable)
+    void ServerStartGame();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastStartGame();
 
     UFUNCTION(Client, Reliable)
     void ClientCreatePlayerInfoUI();
