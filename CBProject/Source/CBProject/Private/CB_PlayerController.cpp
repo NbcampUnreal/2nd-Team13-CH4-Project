@@ -267,20 +267,16 @@ void ACB_PlayerController::StartDash(const FInputActionValue& Value)
     APawn* ControlledPawn = GetPawn();
     if (!ControlledPawn) return;
 
+    FVector Start = ControlledPawn->GetActorLocation();
+    FVector Target = Start + ControlledPawn->GetActorForwardVector() * DashDistance;
+
+    //  여기서 서버에 요청만 보내고
+    ServerStartDash(Start, Target);
+
+    // 로컬에서는 이동X
     bCanDash = false;
-    bIsDashing = true;
-    DashInterpAlpha = 0.f;
-
-    DashStartLocation = ControlledPawn->GetActorLocation();
-    DashTargetLocation = DashStartLocation + ControlledPawn->GetActorForwardVector() * DashDistance;
-
-    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(ControlledPawn))
-    {
-        Fighter->bIsDashing = true;
-    }
-
-    GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 1.0f, false);
 }
+
 
 void ACB_PlayerController::HandleDropDownInput(const FInputActionValue& Value)
 {
@@ -355,4 +351,23 @@ void ACB_PlayerController::AttackKick(const FInputActionValue& Value)
 
         Fighter->ServerKick(State);
     }
+}
+
+void ACB_PlayerController::ServerStartDash_Implementation(FVector StartLocation, FVector TargetLocation)
+{
+    APawn* ControlledPawn = GetPawn();
+    if (!ControlledPawn) return;
+
+    DashStartLocation = StartLocation;
+    DashTargetLocation = TargetLocation;
+    DashInterpAlpha = 0.f;
+    bIsDashing = true;
+
+    if (ACB_FigtherCharacter* Fighter = Cast<ACB_FigtherCharacter>(ControlledPawn))
+    {
+        Fighter->bIsDashing = true;
+    }
+
+    // 쿨타임 시작
+    GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ACB_PlayerController::ResetDash, 2.0f, false);
 }
