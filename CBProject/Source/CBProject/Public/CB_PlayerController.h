@@ -29,7 +29,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     UCB_UIManager* GetUIManager() const;
 
-    UFUNCTION(Server, Reliable)
+    UFUNCTION(Server, Reliable, BlueprintCallable)
     void ServerStartGame();
 
     UFUNCTION(NetMulticast, Reliable)

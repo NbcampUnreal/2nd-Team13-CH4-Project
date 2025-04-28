@@ -22,8 +22,10 @@ public:
     // HorizontalBox를 바인딩할 UPROPERTY 선언
     UPROPERTY(meta = (BindWidget))
     UHorizontalBox* PlayerInfoContainer;
-	UVerticalBox* Team1Container;
-    UVerticalBox* Team2Container;
+    //UPROPERTY(meta = (BindWidget))
+	//UVerticalBox* Team1Container;
+    //UPROPERTY(meta = (BindWidget))
+    //UVerticalBox* Team2Container;
 
 
     // 플레이어 정보 위젯 클래스 설정

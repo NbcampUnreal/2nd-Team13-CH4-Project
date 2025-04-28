@@ -22,6 +22,7 @@ ACB_PlayerController::ACB_PlayerController()
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
     SetActorTickEnabled(true);
+    bReplicates = true;
 }
 
 void ACB_PlayerController::BeginPlay()
@@ -87,7 +88,15 @@ void ACB_PlayerController::ServerStartGame_Implementation()
 
 void ACB_PlayerController::MulticastStartGame_Implementation()
 {
-    UE_LOG(LogTemp, Warning, TEXT("모든 클라이언트에 게임 시작"));
+    if (UIManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UIManager is valid, calling StartGame"));
+        UIManager->StartGame();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UIManager is NULL!"));
+    }
 }
 
 void ACB_PlayerController::SetInputEnabled(bool bEnable)

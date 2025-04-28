@@ -10,6 +10,22 @@
 void UCB_PlayerWidgetContainer::NativeConstruct()
 {
 	Super::NativeConstruct();
+	UpdatePlayerList();
+
+	if (!PlayerInfoContainer)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerInfoContainer is NULL"));
+	}
+	/*
+	if (!Team1Container)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Team1Container is NULL"));
+	}
+	if (!Team2Container)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Team2Container is NULL"));
+	}
+	*/
 }
 
 void UCB_PlayerWidgetContainer::UpdatePlayerList()
@@ -66,21 +82,34 @@ void UCB_PlayerWidgetContainer::UpdatePlayerList()
         {
 
             ACB_PlayerState* CB_PS = Cast<ACB_PlayerState>(PS);
-            if (!CB_PS)
-            {
-                continue;
-            }
+			if (!CB_PS)
+			{
+				UE_LOG(LogTemp, Error, TEXT("캐스팅 실패"));
+				continue;
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("플레이어 이름: %s, 팀 인덱스: %d"), *CB_PS->PlayerName, CB_PS->TeamIndex);
 
             if (PlayerInfoItemClass)
             {
                 UCB_PlayerInfoWidget* PlayerInfoItem = CreateWidget<UCB_PlayerInfoWidget>(GetWorld(), PlayerInfoItemClass);
+
+				if (PlayerInfoItem)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("PlayerInfoItem 생성 성공: %s"), *CB_PS->PlayerName);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("PlayerInfoItem 생성 실패"));
+				}
                 if (PlayerInfoItem)
                 {
                     PlayerInfoItem->SetPlayerState(CB_PS);
-
+					PlayerInfoContainer->AddChild(PlayerInfoItem);
+					/*
                     if (CB_PS->TeamIndex == 1)
                     {
-                        Team1Container->AddChild(PlayerInfoItem);
+						Team1Container->AddChild(PlayerInfoItem);
                     }
 					else if (CB_PS->TeamIndex == 2)
 					{
@@ -90,6 +119,7 @@ void UCB_PlayerWidgetContainer::UpdatePlayerList()
 					{
 						UE_LOG(LogTemp, Warning, TEXT("Invalid team index"));
 					}
+					*/
 
                 }
             }
