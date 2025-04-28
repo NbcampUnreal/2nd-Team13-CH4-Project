@@ -87,6 +87,7 @@ void ACB_GameMode::PostLogin(APlayerController* NewPlayer)
 		// 디버깅용
 		UE_LOG(LogTemp, Display, TEXT("PostLogin Set PlayerNameString: %s"), *CBPS->PlayerName);
 	}
+
 }
 
 

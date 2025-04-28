@@ -16,7 +16,7 @@ ACB_FigtherCharacter::ACB_FigtherCharacter()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	bReplicates = true;
 	MaxHealth = 100.f;
-	CurrentHealth = 30.f;
+	CurrentHealth = 100.f;
 
 
 }
