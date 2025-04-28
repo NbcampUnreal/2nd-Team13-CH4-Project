@@ -15,7 +15,7 @@ void UCB_PlayerInfoWidget::SetPlayerState(ACB_PlayerState* NewPlayerState)
 
     if (NameText)
     {
-        FString PlayerName = PlayerState->GetPlayerName();
+        FString PlayerName = PlayerState->PlayerName;
         NameText->SetText(FText::FromString(PlayerName));
     }
 

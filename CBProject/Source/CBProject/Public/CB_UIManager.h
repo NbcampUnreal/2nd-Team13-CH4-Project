@@ -49,6 +49,8 @@ protected:
 	TSubclassOf<UUserWidget> CountdownWidgetClass;
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> BattleUI;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerWidgetContainerClass;
 
 	UUserWidget* CountdownWidget = nullptr;
 

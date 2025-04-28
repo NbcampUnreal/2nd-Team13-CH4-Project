@@ -106,7 +106,17 @@ void UCB_UIManager::RemoveCountdownWidget()
 		CountdownWidget = nullptr;
 	}
 
-	//서영님 UI 부분 집어넣으면 됨
+	if (PlayerWidgetContainerClass) // HPUIClass는 UPROPERTY로 받아온다고 가정
+	{
+		UUserWidget* HPUI = CreateWidget<UUserWidget>(OwningController, PlayerWidgetContainerClass);
+		if (HPUI)
+		{
+			HPUI->AddToViewport();
+
+			UE_LOG(LogTemp, Warning, TEXT("PlayerWidgetContainerClass AddToViewport"));
+		}
+	}
+	
 
 	FInputModeGameOnly InputMode;
 	OwningController->SetInputMode(InputMode);
