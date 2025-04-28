@@ -67,6 +67,10 @@ protected:
     UFUNCTION()
     void AttackKick(const FInputActionValue& Value);
 
+    UFUNCTION(Server, Reliable)
+    void ServerStartDash(FVector StartLocation, FVector TargetLocation);
+
+
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputMappingContext* InputMappingContext;
